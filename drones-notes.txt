@@ -1,0 +1,7 @@
+- étude comparative drones (cdct) tableur (autonomie, poid, durée de charge, modulabilité, etc...)
+- drone sous ROS (besoin de python)
+- nombre de drônes nécéssaires
+- fonctionne avec n'importe quel type de drône prog
+- github : deployment drone
+- techno de comm à voir
+- tello/ crazy fly
