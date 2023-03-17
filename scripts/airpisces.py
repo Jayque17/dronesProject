@@ -11,6 +11,12 @@ from actions import Actions
 
 if __name__ == "__main__":
 
+    
+    env = gym.make('BabyRobotEnv-v2')
+
+
+
+
     files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\projet_drones\\files_ap\\"
     mana_env = parser(files_ap + "test.ap")
     states = flatten_space(mana_env.observation_space).shape
