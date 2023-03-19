@@ -5,6 +5,9 @@ if __name__ == "__main__":
 
         # create an instance of our custom environment
     # env = BabyRobotEnv_v1()
+    # create an instance of our custom environment
+    env = BabyRobotEnv_v1()
+    # env = gym.make('BabyRobotEnv-v2')
 
     # # use the Gymnasium 'check_env' function to check the environment
     # # - returns nothing if the environment is verified as ok
@@ -15,6 +18,13 @@ if __name__ == "__main__":
     # print(f'Action Space Sample: {env.action_space.sample()}')
           
     env = BabyRobotEnv_v2()
+    print(f'Action Space: {env.action_space}')
+    print(f'Action Space Sample: {env.action_space.sample()}')
+
+    print(f"Observation Space: {env.observation_space}")
+    print(f"Observation Space Sample: {env.observation_space.sample()}")
+          
+    
 
     # initialize the environment
     env.reset()

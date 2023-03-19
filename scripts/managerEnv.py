@@ -41,6 +41,14 @@ class ManagerEnv(Env):
     low = np.zeros((2,), dtype=int)
     high = np.array([self.nb_drones, len(self.targets_pos)])
 
+    # self.observation_space = Dict(
+    #     {
+    #         "drones": Box(0, len(self.drones), shape=(2,), dtype=int),
+    #         "target": Box(0, len(self.targets_pos), shape=(3,), dtype=int),
+    #         "obstacle": Box(0, len(self.obstacles_pos), shape=(3,), dtype=int),
+    #     }
+    # )
+
     self.observation_space = Dict(
         {
             "drones": Box(0, len(self.drones), shape=(2,), dtype=int),
