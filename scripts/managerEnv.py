@@ -28,6 +28,8 @@ class ManagerEnv(Env):
     self.state = 0
     self.nb_drones = 1 # nb_drones
     self.drones = [Drone(start_pos) for i in range(nb_drones)]
+    self.max_w = map_simu_dims[0]
+    self.max_h = map_simu_dims[1]
     self.drone_pos = self._coordinates_to_integers(self.drones[0].pos)
     self.map_real_dims = map_real_dims
     self.map_simu_dims = map_simu_dims
@@ -37,8 +39,6 @@ class ManagerEnv(Env):
   #  self.obstacles_pos = obstacles_pos
   #  self.launched_drones = []
     self.visited_targets = []
-    self.max_w = map_simu_dims[0]
-    self.max_h = map_simu_dims[1]
 
   #  low = np.zeros((2,), dtype=int)
   #  high = np.array([self.nb_drones, len(self.targets_pos)])
@@ -98,7 +98,7 @@ class ManagerEnv(Env):
     return {"drone": self.drone_pos, "target": self.target}
 
   def reset(self, seed = None, options = None):
-    super.reset(seed = seed)
+    super().reset(seed = seed)
 
     self.state = 0
     self.launched_drones = []
@@ -106,8 +106,7 @@ class ManagerEnv(Env):
     #self.drones = [Drone(self.start_pos) for i in range(self.nb_drones)] 
     # print(self._get_obs())
     # return (self._get_obs(), {})
-    self.drone_po = self._coordinates_to_integers(self.start_pos)
-    self.target = self._coordinates_to_integers(self.targets_pos[0])
+    self.drone_pos = self.start_pos
     self.visited_targets = []
     self.battery_actions = 100
 
@@ -212,7 +211,7 @@ class ManagerEnv(Env):
           #PrintInDroneFile
           reward = 1
 
-    if (self._out_of_bounds(self.drones[drone_id].pos, self.max_w, self.max_h) """or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]"""):
+    if (self._out_of_bounds(self.drones[drone_id].pos, self.max_w, self.max_h)): # """or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]"""):
       self.drones[drone_id].pos = tmp_pos
       done = True
       reward = -1000
@@ -222,7 +221,7 @@ class ManagerEnv(Env):
     #   reward = -100
     #   done = True
         
-    if target in self.visited_targets and self.drone_pos == self.start_pos  :
+    if self.target in self.visited_targets and self.drone_pos == self.start_pos  :
       # Targets done
       done = True
       reward = 100

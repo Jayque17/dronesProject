@@ -26,12 +26,12 @@ if __name__ == "__main__":
     print("real dims", mana_env.map_real_dims)
     print(mana_env.observation_space)
 
-    model = build_veryenv(states, actions, mana_env)
-    model.summary()
+    # model = build_veryenv(states, actions, mana_env)
+    # model.summary()
 
-    dqn = build_agent(model, actions)
-    dqn.compile(tf.keras.optimizers.Adam(learning_rate=1e-3), metrics=['mae'])
-    dqn.fit(mana_env, nb_steps=50000, visualize=False, verbose=1)
+    # dqn = build_agent(model, actions)
+    # dqn.compile(tf.keras.optimizers.Adam(learning_rate=1e-3), metrics=['mae'])
+    # dqn.fit(mana_env, nb_steps=50000, visualize=False, verbose=1)
 
     done = False
     state = mana_env.reset()
@@ -40,7 +40,7 @@ if __name__ == "__main__":
         print(action)
         state, reward, done,_, _ = mana_env.step(action)
         print(state)
-        mana_env.render()
+        # mana_env.render()
 
 
 
