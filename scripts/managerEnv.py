@@ -44,8 +44,8 @@ class ManagerEnv(Env):
     self.observation_space = Dict(
         {
             "drones": Box(0, len(self.drones), shape=(2,), dtype=int),
-            "target": Box(0, len(self.targets_pos), shape=(2,), dtype=int),
-            "obstacle": Box(0, len(self.obstacles_pos), shape=(2,), dtype=int),
+            "target": Box(0, len(self.targets_pos), shape=(3,), dtype=int),
+            "obstacle": Box(0, len(self.obstacles_pos), shape=(3,), dtype=int),
         }
     )
 
@@ -192,7 +192,7 @@ class ManagerEnv(Env):
     return (self._get_obs(), reward, done, False, {})
 
 
-  def _lie_to_env(observation_space):
+  def _lie_to_env(observation_space): #i don't understand
     pass
 
 

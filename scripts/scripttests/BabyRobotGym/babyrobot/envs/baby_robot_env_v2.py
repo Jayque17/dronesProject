@@ -1,4 +1,4 @@
-from babyrobot import BabyRobotEnv_v1
+from .baby_robot_env_v1 import BabyRobotEnv_v1
 from actions_test import Actions
 
 import numpy as np

@@ -6,6 +6,8 @@ from gym.spaces import Discrete,MultiDiscrete
 
 class BabyRobotEnv_v1(gym.Env):
 
+    metadata = {'render.modes': ['human']}
+
     def __init__(self, **kwargs):
         super().__init__()
 

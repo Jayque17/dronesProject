@@ -5,20 +5,18 @@ from numpy.core.numeric import shape
 tf.keras.optimizers.Adam._name = 'test'
 
 from functionnalities import *
-from actions import Actions
 
 
 
 if __name__ == "__main__":
 
-    
-    env = gym.make('BabyRobotEnv-v2')
-
-
-
-
     files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\projet_drones\\files_ap\\"
     mana_env = parser(files_ap + "test.ap")
+
+    
+    print(mana_env.observation_space)
+    print(mana_env.observation_space.sample())
+
     states = flatten_space(mana_env.observation_space).shape
     actions = mana_env.action_space.n
 
