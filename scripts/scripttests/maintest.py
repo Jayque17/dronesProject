@@ -1,5 +1,6 @@
 import gym
 from BabyRobotGym.babyrobot.envs.baby_robot_env_v2 import BabyRobotEnv_v2
+from scripts.scripttests.babyrobot import BabyRobotEnv_v1
 
 if __name__ == "__main__":
 

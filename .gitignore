@@ -1,3 +1,5 @@
 env
 __pycache__/
 *.pyc
+/.vscode/
+scripts/__pycache__/functionnalities.cpython-310.pyc

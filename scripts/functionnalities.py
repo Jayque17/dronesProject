@@ -107,7 +107,7 @@ def parser(file_ap):
       if(l[0] == "H"):
         start_pos = (int(l[1]), int(l[2]))
       elif(l[0] == "T"):
-        targets_pos.append((int(l[1]), int(l[2]), False))
+        targets_pos.append((int(l[1]), int(l[2])))
       else:
         raise Exception("unhandle parameter: " + l[0])
     elif(len(l) == 1):
