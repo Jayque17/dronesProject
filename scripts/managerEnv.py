@@ -17,7 +17,7 @@ WINDOW_HEIGHT = 768
 WINDOW_WIDTH = 1024
 block_size = 30
 # pygame.init()
-# screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+# # screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 # font_simu = pygame.font.SysFont('liberationmono', block_size, True)
 
 class ManagerEnv(Env):
@@ -25,7 +25,7 @@ class ManagerEnv(Env):
     
     self.nb_drones = 1
     self.action_space = Discrete(len(Actions) * self.nb_drones,)
-    self.battery_actions = 100
+    self.battery_actions = 1000
     self.state = 0
     # nb_drones
     self.drones = [Drone(start_pos) for i in range(nb_drones)]
@@ -37,7 +37,7 @@ class ManagerEnv(Env):
     self.start_pos = self._coordinates_to_integers(start_pos)
  #   self.targets_pos = targets_pos
     self.target = self._coordinates_to_integers(targets_pos[0])
-  #  self.obstacles_pos = obstacles_pos
+    self.obstacles_pos = obstacles_pos
   #  self.launched_drones = []
     self.visited_targets = []
     self.mapping_actions = dict((item.value, item) for item in Actions)
@@ -111,12 +111,12 @@ class ManagerEnv(Env):
     # return (self._get_obs(), {})
     self.drone_pos = self.start_pos
     self.visited_targets = []
-    self.battery_actions = 100
+    self.battery_actions = 1000
 
     return(self._get_obs(), {})
   
   def _out_of_bounds(self, pos, max_h, max_w):
-    if (pos[0] < 0 or pos[0] > max_h or pos[1] < 0 or pos[1] > max_w):
+    if (pos[0] < 0 or pos[0] > max_w or pos[1] < 0 or pos[1] > max_h):
         return False
     return True
   
@@ -271,19 +271,19 @@ class ManagerEnv(Env):
         pygame.draw.rect(self.screen, black, rect, 1)
 
 
-  # def __draw_obstacle(self, obstacle_pos):
+  def __draw_obstacle(self, obstacle_pos):
   
-  # font_simu = pygame.font.SysFont('liberationmono', block_size, True)
-  #   black = (0, 0, 0)
-  #   alt_color = (255, 195,0)
-  #   for i in range(0, self.block_size):
-  #     for j in range(0, self.block_size):
-  #       if((i % 2 == 0 and j % 2 == 0) or (i % 2 != 0 and j % 2 != 0)):
-  #         rect = pygame.Rect(obstacle_pos[0] * self.block_size + j, obstacle_pos[1] * self.block_size + i, 1, 1)
-  #         pygame.draw.rect(screen, black, rect, 1)
-  #   if(int(obstacle_pos[2]) > 0 and font_simu != None):
-  #     text_obstacle = font_simu.render(str(obstacle_pos[2]), True, alt_color)
-  #     screen.blit(text_obstacle, (obstacle_pos[0] * self.block_size, obstacle_pos[1] * self.block_size))
+    font_simu = pygame.font.SysFont('liberationmono', block_size, True)
+    black = (0, 0, 0)
+    alt_color = (255, 195,0)
+    for i in range(0, self.block_size):
+      for j in range(0, self.block_size):
+        if((i % 2 == 0 and j % 2 == 0) or (i % 2 != 0 and j % 2 != 0)):
+          rect = pygame.Rect(obstacle_pos[0] * self.block_size + j, obstacle_pos[1] * self.block_size + i, 1, 1)
+          pygame.draw.rect(self.screen, black, rect, 1)
+    if(int(obstacle_pos[2]) > 0 and font_simu != None):
+      text_obstacle = font_simu.render(str(obstacle_pos[2]), True, alt_color)
+      self.screen.blit(text_obstacle, (obstacle_pos[0] * self.block_size, obstacle_pos[1] * self.block_size))
 
   def __draw_target(self):
   # def __draw_target(self, target_pos):
@@ -324,8 +324,8 @@ class ManagerEnv(Env):
     self.__draw_grid()
     self.__draw_house()
 
-    # for i in range(len(self.obstacles_pos)):
-    #   self.__draw_obstacle(self.obstacles_pos[i])
+    for i in range(len(self.obstacles_pos)):
+      self.__draw_obstacle(self.obstacles_pos[i])
     # for i in range(len(self.targets_pos)):
     #   self.__draw_target(self.targets_pos[i])
     # for i in range(len(self.drones)):
@@ -346,7 +346,7 @@ class ManagerEnv(Env):
     pygame.event.pump()
     pygame.display.update()
 
-    self.clock.tick(4)
+    self.clock.tick(6)
 
 
     
