@@ -35,12 +35,18 @@ if __name__ == "__main__":
 
     done = False
     state = mana_env.reset()
+    total = 0
+    print(mana_env.mapping_actions)
     while not done:
         action = mana_env.action_space.sample()
-        print(action)
+        print("actions", mana_env.action_space)
+        print("action", action, mana_env.mapping_actions[action])
+        print("drone pos", mana_env.drones[0].pos)
         state, reward, done,_, _ = mana_env.step(action)
-        print(state)
-        # mana_env.render()
+        print(state, reward, done)
+        total += reward
+        print("total", total, "\n")
+        mana_env.render()
 
 
 

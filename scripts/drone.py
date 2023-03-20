@@ -12,6 +12,7 @@ class Drone():
 
   def rotate(self, dir):
     self.vect = (self.vect + dir) % 8
+    self.battery -= 1
   
   def forward(self):
     self.pos = (self.pos[0] + self.rotations[self.vect][0],self.pos[1] + self.rotations[self.vect][1])

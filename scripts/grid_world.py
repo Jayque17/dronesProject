@@ -166,7 +166,7 @@ class GridWorldEnv(gym.Env):
             pygame.quit()
 
 
-env = GridWorldEnv("human")
+env = GridWorldEnv("human", 10)
 
 done = False
 state = env.reset()
