@@ -10,7 +10,8 @@ from functionnalities import *
 
 if __name__ == "__main__":
 
-    files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\projet_drones\\files_ap\\" #path windows julien
+    #files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\projet_drones\\files_ap\\" #path windows julien
+    files_ap = "files_ap/" #path linux thomas
     mana_env = parser(files_ap + "test.ap")
 
     
