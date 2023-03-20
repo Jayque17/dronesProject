@@ -1,5 +1,5 @@
-env
-__pycache__/
+env/
+**/__pycache__
 *.pyc
 /.vscode/
-scripts/__pycache__/functionnalities.cpython-310.pyc
+__pycache__/
