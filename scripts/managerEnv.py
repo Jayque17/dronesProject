@@ -29,8 +29,8 @@ class ManagerEnv(Env):
     self.state = 0
     # nb_drones
     self.drones = [Drone(start_pos) for i in range(nb_drones)]
-    self.max_w = map_simu_dims[0]
-    self.max_h = map_simu_dims[1]
+    self.max_w = map_simu_dims[1]
+    self.max_h = map_simu_dims[0]
     self.drone_pos = self._coordinates_to_integers(self.drones[0].pos)
     self.map_real_dims = map_real_dims
     self.map_simu_dims = map_simu_dims
@@ -116,9 +116,9 @@ class ManagerEnv(Env):
     return(self._get_obs(), {})
   
   def _out_of_bounds(self, pos, max_h, max_w):
-    if (pos[0] < 0 or pos[0] > max_w or pos[1] < 0 or pos[1] > max_h):
-        return False
-    return True
+    x, y = pos
+    print("x, y = (", x , ',', y, ')', 'max_w = ', max_w, 'max_h = ', max_h)
+    return (x < 0 or x > max_w or y < 0 or y > max_h)
   
   def step(self, action):
     self.battery_actions -= 1
