@@ -299,6 +299,7 @@ class ManagerEnv(Env):
     col_roof = (255,0,0)
     
     start = self._integers_to_coordinates(self.start_pos)
+    print("start", start, self.start_pos)
     wall = pygame.Rect(start[0] * self.block_size + (1/5) * self.block_size, start[1] * self.block_size  + (2/3) * self.block_size, 20, 10)
     door = pygame.Rect(start[0] * self.block_size + (1/2) * self.block_size, start[1] * self.block_size  + (5/6) * self.block_size, 2, 5)
 

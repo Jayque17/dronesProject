@@ -42,10 +42,10 @@ if __name__ == "__main__":
     print("actions", mana_env.action_space)
     print("action", action, mana_env.mapping_actions[action])
     print("drone pos", mana_env.drones[0].pos)
-    state, reward, done,_, _ = mana_env.step(action)
-    print(state, reward, done)
-    total += reward
-    print("total", total, "\n")
+    # state, reward, done,_, _ = mana_env.step(action)
+    # print(state, reward, done)
+    # total += reward
+    # print("total", total, "\n")
     mana_env.render()
     while True:
         pass
