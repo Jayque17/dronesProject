@@ -29,12 +29,15 @@ class ManagerEnv(Env):
     self.state = 0
     # nb_drones
     self.drones = [Drone(start_pos) for i in range(nb_drones)]
-    self.max_w = map_simu_dims[1]
-    self.max_h = map_simu_dims[0]
+    self.max_w = map_simu_dims[0]
+    self.max_h = map_simu_dims[1]
     self.drone_pos = self._coordinates_to_integers(self.drones[0].pos)
     self.map_real_dims = map_real_dims
     self.map_simu_dims = map_simu_dims
+    print("Start pos", start_pos)
     self.start_pos = self._coordinates_to_integers(start_pos)
+    print("Self start pos", self.start_pos)
+    print("start pos after integer", self._integers_to_coordinates(self.start_pos))
  #   self.targets_pos = targets_pos
     self.target = self._coordinates_to_integers(targets_pos[0])
     self.obstacles_pos = obstacles_pos
@@ -115,10 +118,10 @@ class ManagerEnv(Env):
 
     return(self._get_obs(), {})
   
-  def _out_of_bounds(self, pos, max_h, max_w):
+  def _out_of_bounds(self, pos):
     x, y = pos
-    print("x, y = (", x , ',', y, ')', 'max_w = ', max_w, 'max_h = ', max_h)
-    return (x < 0 or x > max_w or y < 0 or y > max_h)
+    print("x, y = (", x , ',', y, ')', 'max_w = ', self.max_w, 'max_h = ', self.max_h)
+    return (x < 0 or x > self.max_w or y < 0 or y > self.max_h)
   
   def step(self, action):
     self.battery_actions -= 1
@@ -228,7 +231,7 @@ class ManagerEnv(Env):
         reward = -50
         
 
-    if (self._out_of_bounds(self.drones[drone_id].pos, self.max_w, self.max_h)): # """or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]"""):
+    if (self._out_of_bounds(self.drones[drone_id].pos)): # """or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]"""):
       self.drones[drone_id].pos = tmp_pos
       done = True
       reward = -1000
@@ -255,6 +258,7 @@ class ManagerEnv(Env):
   def _coordinates_to_integers(self, coordinates):
     """ Takes a tuple of coordinates and returns the corresponding integer """
     x, y = coordinates
+    print("max_w", self.max_w)
     return y * self.max_w + x
   
   def _integers_to_coordinates(self, integer):
