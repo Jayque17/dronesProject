@@ -1,82 +1,77 @@
 import gym 
 import random
 import numpy as np 
-from tensorflow.keras.models import Sequential, Model
-from tensorflow.keras.layers import Dense, Flatten, Embedding
-
 from rl.agents import DQNAgent
 from rl.policy import BoltzmannQPolicy
 from rl.memory import SequentialMemory
 from rl.processors import MultiInputProcessor
-from tensorflow.keras.layers import concatenate
-
-
-from tensorflow.keras import Input
-
+from tensorflow import keras
+from keras import Input
+from keras.layers import concatenate
 from managerEnv import ManagerEnv
-
-
-
-
-
+from keras.models import Sequential, Model
+from keras.layers import Dense, Flatten, Embedding
 
 def build_veryenv(states, actions, env):
-    target = Sequential()
-    target.add(Flatten(input_shape=(len(env.targets_pos),), name='targets'))
-    target_input = Input(shape=(len(env.targets_pos),), name='targets')
+    target = Dense(8, activation='relu')
+    #target.add(Flatten(input_shape=(len(env.targets_pos),), name='targets'))
+    target_input = Input(shape=(len(env.targets_pos[0]),), name='targets')
     target_encoded = target(target_input)
 
+    # obstacles = Sequential()
+    # obstacles.add(Flatten(input_shape=(len(env.obstacles_pos),), name='obstacles'))
+    # obstacles_input = Input(shape=(len(env.obstacles_pos),), name='obstacles')
+    # obstacles_encoded = obstacles(obstacles_input)
 
-    obstacles = Sequential()
-    obstacles.add(Flatten(input_shape=(len(env.obstacles_pos),), name='obstacles'))
-    obstacles_input = Input(shape=(len(env.obstacles_pos),), name='obstacles')
-    obstacles_encoded = obstacles(obstacles_input)
 
-
-    drones = Sequential()
-    drones.add(Flatten(input_shape=(len(env.drones),), name='drones'))
-    drones_input = Input(shape=(len(env.drones),), name='drones')
+    drones = Dense(8, activation='relu')
+    # drones.add(Flatten(input_shape=(len(env.drones),), name='drones'))
+    # drones_input = Input(shape=(len(env.drone_pos),), name='drones')
+    # drones.add(Flatten(input_shape=(1,), name='drones'))
+    drones_input = Input(shape=(1,), name='drones')
     drones_encoded = drones(drones_input)
 
-    con = concatenate([target_encoded, obstacles_encoded, drones_encoded])
+    #con = concatenate([target_encoded, obstacles_encoded, drones_encoded])
+    con = concatenate([target_encoded, drones_encoded])
 
     hidden = Dense(16, activation='relu')(con)
     for _ in range(2): 
       hidden = Dense(16, activation='relu')(hidden)
     output = Dense(actions, activation='linear')(hidden)
-    model_final = Model(inputs=[target_input, obstacles_input, drones_input], outputs=output)
+    #model_final = Model(inputs=[target_input, obstacles_input, drones_input], outputs=output)
+    model_final = Model(inputs=[target_input, drones_input], outputs=output)
     return model_final
 
-def build_model(states, actions, env):
-    drones_model = Sequential()
-    drones_model.add(Flatten(input_shape = (len(env.drones),)))
-    drones_model.add(Dense(24, activation='relu'))
+# def build_model(states, actions, env):
+#     drones_model = Sequential()
+#     drones_model.add(Flatten(input_shape = (len(env.drones),)))
+#     drones_model.add(Dense(24, activation='relu'))
     
-    obstacles_model = Sequential()
-    obstacles_model.add(Flatten(input_shape = (len(env.obstacles_pos),)))
-    obstacles_model.add(Dense(8, activation='relu'))
+#     obstacles_model = Sequential()
+#     obstacles_model.add(Flatten(input_shape = (len(env.obstacles_pos),)))
+#     obstacles_model.add(Dense(8, activation='relu'))
 
-    target_model = Sequential()
-    target_model.add(Flatten(input_shape = (len(env.targets_pos),)))
-    target_model.add(Dense(8, activation='relu'))
+#     target_model = Sequential()
+#     target_model.add(Flatten(input_shape = (len(env.targets_pos),)))
+#     target_model.add(Dense(8, activation='relu'))
 
-    conca_model = concatenate([drones_model, obstacles_model, target_model])
+#     conca_model = concatenate([drones_model, obstacles_model, target_model])
 
-    hidden = Dense(24, activation='relu')(conca_model)
-    for _ in range(2): 
-        hidden = Dense(16, activation='relu')(hidden)
+#     hidden = Dense(24, activation='relu')(conca_model)
+#     for _ in range(2): 
+#         hidden = Dense(16, activation='relu')(hidden)
 
-    output = Dense(actions, activation='linear')(hidden)
-    model_final = Model(inputs=[drones_model, obstacles_model, target_model], outputs=output)
+#     output = Dense(actions, activation='linear')(hidden)
+#     model_final = Model(inputs=[drones_model, obstacles_model, target_model], outputs=output)
 
-    return model_final
+#     return model_final
 
 def build_agent(model, actions):
     policy = BoltzmannQPolicy()
     memory = SequentialMemory(limit=50000, window_length=1)
     dqn = DQNAgent(model=model, memory=memory, policy=policy, 
                   nb_actions=actions, nb_steps_warmup=10, target_model_update=1e-2)
-    dqn.processor = MultiInputProcessor(3)
+    dqn.processor = MultiInputProcessor(2)
     return dqn
 
 

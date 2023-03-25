@@ -38,8 +38,8 @@ class ManagerEnv(Env):
     self.start_pos = self._coordinates_to_integers(start_pos)
     print("Self start pos", self.start_pos)
     print("start pos after integer", self._integers_to_coordinates(self.start_pos))
- #   self.targets_pos = targets_pos
-    self.target = self._coordinates_to_integers(targets_pos[0])
+    self.targets_pos = targets_pos[:1]
+   # self.target = self._coordinates_to_integers(targets_pos[0])
     self.obstacles_pos = obstacles_pos
   #  self.launched_drones = []
     self.visited_targets = []
@@ -101,7 +101,7 @@ class ManagerEnv(Env):
 
     # print('jolie dico', d)
 
-    return {"drone": self.drone_pos, "target": self.target}
+    return {"drone": self.drone_pos, "target": self._coordinates_to_integers(self.targets_pos[0])}
 
   def reset(self, seed = None, options = None):
     super().reset(seed = seed)
@@ -214,10 +214,10 @@ class ManagerEnv(Env):
 
     elif self.mapping_actions[action] == Actions.DO_TASK:
       if(self.drones[drone_id].launched):
-        if (self.drone_pos == self.target and self.target not in self.visited_targets):
+        if (self.drone_pos == self.targets_pos[0] and self.targets_pos[0] not in self.visited_targets):
           #PrintInDroneFile
           reward = 50
-          self.visited_targets.append(self.target)
+          self.visited_targets.append(self.targets_pos[0])
         else:
           reward = -10
       else:
@@ -241,7 +241,7 @@ class ManagerEnv(Env):
     #   reward = -100
     #   done = True
         
-    if self.target in self.visited_targets and self.drone_pos == self.start_pos  :
+    if self.targets_pos[0] in self.visited_targets and self.drone_pos == self.start_pos  :
       # Targets done
       done = True
       reward = 100
@@ -292,8 +292,8 @@ class ManagerEnv(Env):
   def __draw_target(self):
   # def __draw_target(self, target_pos):
     target_col = (0, 255, 0)
-    if(not self.target in self.visited_targets):
-      target_pos = self._integers_to_coordinates(self.target)
+    if(not self.targets_pos[0] in self.visited_targets):
+      target_pos = self._integers_to_coordinates(self.targets_pos[0])
       pygame.draw.circle(self.screen, target_col, (target_pos[0] * self.block_size + (self.block_size - 1)/2, target_pos[1] * self.block_size + (self.block_size - 1)/2), self.block_size/2, 5)
   
 
