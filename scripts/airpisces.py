@@ -11,10 +11,10 @@ from functionnalities import *
 
 if __name__ == "__main__":
 
-    #files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\projet_drones\\files_ap\\" #path windows julien
-    files_ap = "files_ap/" #path linux thomas
+    files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\projet_drones\\files_ap\\" #path windows julien
+    # files_ap = "files_ap/" #path linux thomas
     mana_env = parser(files_ap + "test.ap")
-    mana_env = FlattenObservation(mana_env)
+    #mana_env = FlattenObservation(mana_env)
     
     print(mana_env.observation_space)
     print(mana_env.observation_space.sample())
@@ -27,13 +27,15 @@ if __name__ == "__main__":
     print("simu dims", mana_env.map_simu_dims)
     print("real dims", mana_env.map_real_dims)
     print('observ_space', mana_env.observation_space)
+    print('observ_space', mana_env.observation_space.shape)
 
-    model = build_veryenv(states, actions, mana_env)
+    model = build_veryenv(actions, mana_env)
     model.summary()
 
     dqn = build_agent(model, actions)
     dqn.compile(tf.keras.optimizers.Adam(learning_rate=1e-3), metrics=['mae'])
     print("ÇA A COMPILÉÉÉÉÉÉÉÉ")
+    print(mana_env)
     dqn.fit(mana_env, nb_steps=50000, visualize=False, verbose=1)
 
     

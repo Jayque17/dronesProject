@@ -12,7 +12,7 @@ from managerEnv import ManagerEnv
 from keras.models import Sequential, Model
 from keras.layers import Dense, Flatten, Embedding
 
-def build_veryenv(states, actions, env):
+def build_veryenv(actions, env):
     target = Dense(8, activation='relu')
     #target.add(Flatten(input_shape=(len(env.targets_pos),), name='targets'))
     target_input = Input(shape=(len(env.targets_pos[0]),), name='targets')
