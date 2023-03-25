@@ -353,7 +353,3 @@ class ManagerEnv(Env):
     self.clock.tick(6)
 
 
-    
-
-
-
