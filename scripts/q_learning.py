@@ -1,3 +1,4 @@
+from time import sleep
 import numpy as np
 from random import randint, uniform
 import managerEnv
@@ -27,7 +28,6 @@ if __name__ == '__main__':
 
         print(st, reward, done)
         env.render()
-        
         # Update Q
         print("trop grand ? ", stp1)
         action1 = take_action(stp1, Q, 0., env.NB_ACTIONS)

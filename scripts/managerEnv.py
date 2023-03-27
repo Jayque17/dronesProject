@@ -51,8 +51,9 @@ class ManagerEnv(object):
         return self.drone_pos
 
     def __out_of_bounds(self, pos):
+        print("pos", pos, "max_w", self.max_w, "max_h", self.max_h)
         x, y = pos
-        return (x < 0 or x > self.max_w or y < 0 or y > self.max_h)
+        return (x < 0 or x >= self.max_w or y < 0 or y >= self.max_h)
 
     def __coordinates_to_integers(self, coordinates):
         """ Takes a tuple of coordinates and returns the corresponding integer """
@@ -71,14 +72,16 @@ class ManagerEnv(object):
         reward = -1
         done = False
 
-        if (not self.action_space.contains(action)):
+        if not (0 <= action < self.NB_ACTIONS):
             return
 
         # drone_id = action // len(Actions)
         drone_id = 0
         tmp_pos = self.drones[drone_id].pos
+        print("tmp_pos", tmp_pos)
 
         if self.mapping_actions[action] == Actions.LAUNCH:
+            print("launch")
             if (not self.drones[drone_id].launched):
                 self.drones[drone_id].launched = True
                 reward = -10
@@ -88,6 +91,7 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.FORWARD:
+            print("forward")
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].forward()
                 # PrintInDroneFile
@@ -95,6 +99,7 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.RIGHT:
+            print("right")
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].right()
                 # PrintInDroneFile
@@ -102,6 +107,7 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.BACKWARDS:
+            print("backwards")
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].backward()
                 # PrintInDroneFile
@@ -109,6 +115,7 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.LEFT:
+            print("left")
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].left()
                 # PrintInDroneFile
@@ -116,6 +123,7 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.ROTATE_RIGHT:
+            print("rotate right")
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].rotate(1)
                 # PrintInDroneFile
@@ -123,6 +131,7 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.ROTATE_LEFT:
+            print("rotate left")
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].rotate(-1)
                 # PrintInDroneFile
@@ -130,6 +139,7 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.UP:
+            print("up")
             if (self.drones[drone_id].launched):
                 # PrintInDroneFile
                 self.drones[drone_id].up()
@@ -137,6 +147,7 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.DOWN:
+            print("down")
             if (self.drones[drone_id].launched):
                 # PrintInDroneFile
                 self.drones[drone_id].down()
@@ -144,6 +155,7 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.DO_TASK:
+            print("do task")
             if (self.drones[drone_id].launched):
                 if (self.drone_pos == self.targets_pos[0] and self.targets_pos[0] not in self.visited_targets):
                     # PrintInDroneFile
@@ -155,13 +167,16 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action] == Actions.LAND:
+            print("land")
             if (self.drones[drone_id] in self.launched_drones):
                 self.launched_drones.remove(self.drones[drone_id])
                 # PrintInDroneFile
             else:
                 reward = -50
 
+        
         if (self.__out_of_bounds(self.drones[drone_id].pos)):  # """or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]"""):
+            print("Out of bounds", tmp_pos, self.drones[drone_id].pos)
             self.drones[drone_id].pos = tmp_pos
             done = True
             reward = -1000
@@ -171,18 +186,20 @@ class ManagerEnv(object):
         #   reward = -100
         #   done = True
 
-        if self.targets_pos[0] in self.visited_targets and self.drone_pos == self.start_pos:
+        elif self.targets_pos[0] in self.visited_targets and self.drone_pos == self.start_pos:
             # Targets done
+            print("Targets done")
             done = True
             reward = 100
 
-        if (self.battery_actions <= 0):
+        elif (self.battery_actions <= 0):
             # Battery outOfOrder
+            print("Battery outOfOrder")
             reward = -100
             done = True
 
         self.drone_pos = self.__coordinates_to_integers(self.drones[drone_id].pos)
-        return (self.drone_pos, reward, done, False, {})
+        return (self.drone_pos, reward, done, {})
 
 
     def __draw_grid(self):
