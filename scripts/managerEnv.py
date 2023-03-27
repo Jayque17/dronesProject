@@ -77,7 +77,6 @@ class ManagerEnv(object):
 
         # drone_id = action // len(Actions)
         drone_id = 0
-
         tmp_pos = self.drones[drone_id].pos
 
         if self.mapping_actions[action] == Actions.LAUNCH:
@@ -183,8 +182,7 @@ class ManagerEnv(object):
             reward = -100
             done = True
 
-        self.drone_pos = self.__coordinates_to_integers(
-            self.drones[drone_id].pos)
+        self.drone_pos = self.__coordinates_to_integers(self.drones[drone_id].pos)
         return (self.drone_pos, reward, done, False, {})
 
 
