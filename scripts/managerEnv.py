@@ -181,14 +181,8 @@ class ManagerEnv(object):
             reward = -100
             done = True
 
-<<<<<<< HEAD
         self.drone_pos = self.__coordinates_to_integers(self.drones[drone_id].pos)
         return (self.drone_pos, reward, done, False, {})
-=======
-        self.drone_pos = self.__coordinates_to_integers(
-            self.drones[drone_id].pos)
-        return (self.drone_pos, reward, done, {})
->>>>>>> eb2a5364eb03347015a1ac572d83258f41091208
 
 
     def __draw_grid(self):
