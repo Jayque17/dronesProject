@@ -1,5 +1,4 @@
 import pygame
-from gym.spaces import Discrete
 
 from drone import Drone
 from actions import Actions
@@ -31,9 +30,9 @@ class ManagerEnv(object):
         
         self.obstacles_pos = obstacles_pos
         
-        self.action_space = Discrete(len(Actions) * self.nb_drones,)
+        self.NB_ACTIONS = len(Actions) * self.nb_drones
         self.mapping_actions = dict((item.value, item) for item in Actions)
-        self.nb_states = self.max_w * self.max_h
+        self.NB_STATES = self.max_w * self.max_h
 
         self.screen = None
         self.clock = None
@@ -182,8 +181,14 @@ class ManagerEnv(object):
             reward = -100
             done = True
 
+<<<<<<< HEAD
         self.drone_pos = self.__coordinates_to_integers(self.drones[drone_id].pos)
         return (self.drone_pos, reward, done, False, {})
+=======
+        self.drone_pos = self.__coordinates_to_integers(
+            self.drones[drone_id].pos)
+        return (self.drone_pos, reward, done, {})
+>>>>>>> eb2a5364eb03347015a1ac572d83258f41091208
 
 
     def __draw_grid(self):
