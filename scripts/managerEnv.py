@@ -34,11 +34,11 @@ class ManagerEnv(Env):
     self.drone_pos = self._coordinates_to_integers(self.drones[0].pos)
     self.map_real_dims = map_real_dims
     self.map_simu_dims = map_simu_dims
-    print("Start pos", start_pos)
+    #print("Start pos", start_pos)
     self.start_pos = self._coordinates_to_integers(start_pos)
-    print("Self start pos", self.start_pos)
-    print("start pos after integer", self._integers_to_coordinates(self.start_pos))
-    self.targets_pos = targets_pos[:1]
+    #print("Self start pos", self.start_pos)
+    #print("start pos after integer", self._integers_to_coordinates(self.start_pos))
+    self.targets_pos = [self._coordinates_to_integers(targets_pos[0])]
    # self.target = self._coordinates_to_integers(targets_pos[0])
     self.obstacles_pos = obstacles_pos
   #  self.launched_drones = []
@@ -90,7 +90,7 @@ class ManagerEnv(Env):
     #   np.array([drone.pos for drone in self.drones])  
     # ], )
     # a = np.ndarray([drone.pos for drone in self.drones], dtype='object')
-    # print("baba", a)
+    # #print("baba", a)
     # d = Dict(
     #     {
     #         "drones": np.ndarray([drone.pos for drone in self.drones], dtype='object'),
@@ -99,9 +99,9 @@ class ManagerEnv(Env):
     #     }
     # )
 
-    # print('jolie dico', d)
+    # #print('jolie dico', d)
 
-    return {"drone": self.drone_pos, "target": self._coordinates_to_integers(self.targets_pos[0])}
+    return {"drone": self.drone_pos, "target": self.targets_pos[0]}
 
   def reset(self, seed = None, options = None):
     super().reset(seed = seed)
@@ -110,7 +110,7 @@ class ManagerEnv(Env):
     self.launched_drones = []
     #self.nb_drones = self.nb_drones
     #self.drones = [Drone(self.start_pos) for i in range(self.nb_drones)] 
-    # print(self._get_obs())
+    # #print(self._get_obs())
     # return (self._get_obs(), {})
     self.drone_pos = self.start_pos
     self.visited_targets = []
@@ -120,7 +120,7 @@ class ManagerEnv(Env):
   
   def _out_of_bounds(self, pos):
     x, y = pos
-    print("x, y = (", x , ',', y, ')', 'max_w = ', self.max_w, 'max_h = ', self.max_h)
+    #print("x, y = (", x , ',', y, ')', 'max_w = ', self.max_w, 'max_h = ', self.max_h)
     return (x < 0 or x > self.max_w or y < 0 or y > self.max_h)
   
   def step(self, action):
@@ -143,7 +143,7 @@ class ManagerEnv(Env):
     #   9, 10, 11 # drone 3
     # ]
 
-    #print("drone :", drone_id, "fait", action_id)
+    ##print("drone :", drone_id, "fait", action_id)
 
     tmp_pos = self.drones[drone_id].pos
 
@@ -151,7 +151,7 @@ class ManagerEnv(Env):
       if(not self.drones[drone_id].launched):
         self.drones[drone_id].launched = True
         reward = -10
-        #PrintInDroneFile
+        ##PrintInDroneFile
         self.launched_drones.append(self.drones[drone_id])
       else:
         reward = -20
@@ -159,55 +159,55 @@ class ManagerEnv(Env):
     elif self.mapping_actions[action] == Actions.FORWARD:
       if(self.drones[drone_id].launched):
         self.drones[drone_id].forward()
-        #PrintInDroneFile
+        ##PrintInDroneFile
       else:
         reward = -20
 
     elif self.mapping_actions[action] == Actions.RIGHT:
       if(self.drones[drone_id].launched):
         self.drones[drone_id].right()
-        #PrintInDroneFile
+        ##PrintInDroneFile
       else:
         reward = -20
 
     elif self.mapping_actions[action] == Actions.BACKWARDS:
       if(self.drones[drone_id].launched):
         self.drones[drone_id].backward() 
-        #PrintInDroneFile
+        ##PrintInDroneFile
       else:
         reward = -20
         
     elif self.mapping_actions[action] == Actions.LEFT:
       if(self.drones[drone_id].launched):
         self.drones[drone_id].left()
-        #PrintInDroneFile
+        ##PrintInDroneFile
       else:
         reward = -20
         
     elif self.mapping_actions[action] == Actions.ROTATE_RIGHT:
       if(self.drones[drone_id].launched):
         self.drones[drone_id].rotate(1)
-        #PrintInDroneFile
+        ##PrintInDroneFile
       else:
         reward = -20
 
     elif self.mapping_actions[action] == Actions.ROTATE_LEFT:
       if(self.drones[drone_id].launched):
         self.drones[drone_id].rotate(-1)
-        #PrintInDroneFile
+        ##PrintInDroneFile
       else:
         reward = -20
 
     elif self.mapping_actions[action] == Actions.UP:
       if(self.drones[drone_id].launched):
-        #PrintInDroneFile
+        ##PrintInDroneFile
         self.drones[drone_id].up()
       else:
         reward = -20
 
     elif self.mapping_actions[action] == Actions.DOWN:
       if(self.drones[drone_id].launched):
-        #PrintInDroneFile
+        ##PrintInDroneFile
         self.drones[drone_id].down()
       else:
         reward = -20
@@ -215,7 +215,7 @@ class ManagerEnv(Env):
     elif self.mapping_actions[action] == Actions.DO_TASK:
       if(self.drones[drone_id].launched):
         if (self.drone_pos == self.targets_pos[0] and self.targets_pos[0] not in self.visited_targets):
-          #PrintInDroneFile
+          ##PrintInDroneFile
           reward = 50
           self.visited_targets.append(self.targets_pos[0])
         else:
@@ -226,7 +226,7 @@ class ManagerEnv(Env):
     elif self.mapping_actions[action] == Actions.LAND:
       if (self.drones[drone_id] in self.launched_drones):
         self.launched_drones.remove(self.drones[drone_id])
-        #PrintInDroneFile
+        ##PrintInDroneFile
       else:
         reward = -50
         
@@ -237,7 +237,7 @@ class ManagerEnv(Env):
       reward = -1000
 
     # elif (self.drones[drone_id].battery <= 0):
-    #   print("Battery done")
+    #   #print("Battery done")
     #   reward = -100
     #   done = True
         
@@ -258,11 +258,12 @@ class ManagerEnv(Env):
   def _coordinates_to_integers(self, coordinates):
     """ Takes a tuple of coordinates and returns the corresponding integer """
     x, y = coordinates
-    print("max_w", self.max_w)
+    #print("max_w", self.max_w)
     return y * self.max_w + x
   
   def _integers_to_coordinates(self, integer):
     """ Takes an integer and returns the corresponding coordinates """
+    print('gnggn test ', integer,  self.max_w)
     x = integer % self.max_w
     y = integer // self.max_w
     return (x, y)
