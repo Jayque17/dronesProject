@@ -1,99 +1,70 @@
 import pygame
-import numpy as np
-import cv2
-import time
-
-import gym
-from gym import Env
-from gym.spaces import Discrete, Box, MultiDiscrete, Dict
-
-# from google.colab.patches import cv2_imshow
-# from google.colab import output
+from gym.spaces import Discrete
 
 from drone import Drone
 from actions import Actions
 
 WINDOW_HEIGHT = 768
 WINDOW_WIDTH = 1024
-block_size = 30
-# pygame.init()
-# # screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
-# font_simu = pygame.font.SysFont('liberationmono', block_size, True)
+BLOCK_SIZE = 30
+MAP_HEIGHT = 750
+MAP_WIDTH = 1020
 
-
-class ManagerEnv(Env):
+class ManagerEnv(object):
     def __init__(self, nb_drones, map_real_dims, map_simu_dims, start_pos, targets_pos, obstacles_pos) -> None:
 
-        self.nb_drones = 1
-        self.action_space = Discrete(len(Actions) * self.nb_drones,)
-        self.battery_actions = 1000
-        self.state = 0
-        # nb_drones
-        self.drones = [Drone(start_pos) for i in range(nb_drones)]
-        self.max_w = map_simu_dims[0]
-        self.max_h = map_simu_dims[1]
-        self.drone_pos = self._coordinates_to_integers(self.drones[0].pos)
         self.map_real_dims = map_real_dims
         self.map_simu_dims = map_simu_dims
-        # print("Start pos", start_pos)
-        self.start_pos = self._coordinates_to_integers(start_pos)
-        # print("Self start pos", self.start_pos)
-        # print("start pos after integer", self._integers_to_coordinates(self.start_pos))
-        self.targets_pos = [self._coordinates_to_integers(targets_pos[0])]
-       # self.target = self._coordinates_to_integers(targets_pos[0])
-        self.obstacles_pos = obstacles_pos
-    #  self.launched_drones = []
+
+        self.max_w = self.map_simu_dims[0]
+        self.max_h = self.map_simu_dims[1]
+    
+        self.nb_drones = 1
+        self.battery_actions = 1000
+        self.drones = [Drone(start_pos) for i in range(nb_drones)]
+        self.drone_pos = self.__coordinates_to_integers(self.drones[0].pos)
+        self.launched_drones = []
+        
+        self.start_pos = self.__coordinates_to_integers(start_pos)
+        self.targets_pos = [self.__coordinates_to_integers(targets_pos[0])]
         self.visited_targets = []
+        
+        self.obstacles_pos = obstacles_pos
+        
+        self.action_space = Discrete(len(Actions) * self.nb_drones,)
         self.mapping_actions = dict((item.value, item) for item in Actions)
-
-    #  low = np.zeros((2,), dtype=int)
-    #  high = np.array([self.nb_drones, len(self.targets_pos)])
-
-        # self.observation_space = Dict(
-        #     {
-        #         "drones": Box(0, len(self.drones), shape=(2,), dtype=int),
-        #         "target": Box(0, len(self.targets_pos), shape=(3,), dtype=int),
-        #         "obstacle": Box(0, len(self.obstacles_pos), shape=(3,), dtype=int),
-        #     }
-        # )
-
-        # self.observation_space = Dict(
-        #     {
-        #         "drones": Box(0, len(self.drones), shape=(2,), dtype=int),
-        #         "target": Box(0, len(self.targets_pos), shape=(3,), dtype=int),
-        #         "obstacle": Box(0, len(self.obstacles_pos), shape=(3,), dtype=int),
-        #     }
-        # )
-
-        self.WINDOW_HEIGHT = 768
-        self.WINDOW_WIDTH = 1024
-        self.MAP_HEIGHT = 750
-        self.MAP_WIDTH = 1020
+        self.nb_states = self.max_w * self.max_h
 
         self.screen = None
         self.clock = None
         self.white = (255, 255, 255)
-        self.block_size = 30  # in pixelss
 
     def reset(self, seed=None, options=None):
-        super().reset(seed=seed)
 
         self.state = 0
         self.launched_drones = []
         # self.nb_drones = self.nb_drones
         # self.drones = [Drone(self.start_pos) for i in range(self.nb_drones)]
-        # #print(self._get_obs())
-        # return (self._get_obs(), {})
         self.drone_pos = self.start_pos
         self.visited_targets = []
         self.battery_actions = 1000
 
         return self.drone_pos
 
-    def _out_of_bounds(self, pos):
+    def __out_of_bounds(self, pos):
         x, y = pos
-        # print("x, y = (", x , ',', y, ')', 'max_w = ', self.max_w, 'max_h = ', self.max_h)
         return (x < 0 or x > self.max_w or y < 0 or y > self.max_h)
+
+    def __coordinates_to_integers(self, coordinates):
+        """ Takes a tuple of coordinates and returns the corresponding integer """
+        x, y = coordinates
+        return y * self.max_w + x
+
+    def __integers_to_coordinates(self, integer):
+        """ Takes an integer and returns the corresponding coordinates """
+        x = integer % self.max_w
+        y = integer // self.max_w
+        return (x, y)
 
     def step(self, action):
         self.battery_actions -= 1
@@ -106,16 +77,6 @@ class ManagerEnv(Env):
 
         # drone_id = action // len(Actions)
         drone_id = 0
-        # action_id = Actions(action % len(Actions))
-
-        # [
-        #   0, 1, 2, # drone 0
-        #   3, 4, 5, # drone 1
-        #   6, 7, 8, # drone 2
-        #   9, 10, 11 # drone 3
-        # ]
-
-        # print("drone :", drone_id, "fait", action_id)
 
         tmp_pos = self.drones[drone_id].pos
 
@@ -202,7 +163,7 @@ class ManagerEnv(Env):
             else:
                 reward = -50
 
-        if (self._out_of_bounds(self.drones[drone_id].pos)):  # """or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]"""):
+        if (self.__out_of_bounds(self.drones[drone_id].pos)):  # """or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]"""):
             self.drones[drone_id].pos = tmp_pos
             done = True
             reward = -1000
@@ -222,72 +183,59 @@ class ManagerEnv(Env):
             reward = -100
             done = True
 
-        self.drone_pos = self._coordinates_to_integers(
+        self.drone_pos = self.__coordinates_to_integers(
             self.drones[drone_id].pos)
         return (self.drone_pos, reward, done, False, {})
 
-    def _coordinates_to_integers(self, coordinates):
-        """ Takes a tuple of coordinates and returns the corresponding integer """
-        x, y = coordinates
-        # print("max_w", self.max_w)
-        return y * self.max_w + x
-
-    def _integers_to_coordinates(self, integer):
-        """ Takes an integer and returns the corresponding coordinates """
-        print('gnggn test ', integer,  self.max_w)
-        x = integer % self.max_w
-        y = integer // self.max_w
-        return (x, y)
 
     def __draw_grid(self):
         black = (0, 0, 0)
-        for x in range(0, self.MAP_WIDTH, self.block_size):
-            for y in range(0, self.MAP_HEIGHT, self.block_size):
-                rect = pygame.Rect(x, y, self.block_size, self.block_size)
+        for x in range(0, MAP_WIDTH, BLOCK_SIZE):
+            for y in range(0, MAP_HEIGHT, BLOCK_SIZE):
+                rect = pygame.Rect(x, y, BLOCK_SIZE, BLOCK_SIZE)
                 pygame.draw.rect(self.screen, black, rect, 1)
 
     def __draw_obstacle(self, obstacle_pos):
 
-        font_simu = pygame.font.SysFont('liberationmono', block_size, True)
+        font_simu = pygame.font.SysFont('liberationmono', BLOCK_SIZE, True)
         black = (0, 0, 0)
         alt_color = (255, 195, 0)
-        for i in range(0, self.block_size):
-            for j in range(0, self.block_size):
+        for i in range(0, BLOCK_SIZE):
+            for j in range(0, BLOCK_SIZE):
                 if ((i % 2 == 0 and j % 2 == 0) or (i % 2 != 0 and j % 2 != 0)):
                     rect = pygame.Rect(
-                        obstacle_pos[0] * self.block_size + j, obstacle_pos[1] * self.block_size + i, 1, 1)
+                        obstacle_pos[0] * BLOCK_SIZE + j, obstacle_pos[1] * BLOCK_SIZE + i, 1, 1)
                     pygame.draw.rect(self.screen, black, rect, 1)
         if (int(obstacle_pos[2]) > 0 and font_simu != None):
             text_obstacle = font_simu.render(
                 str(obstacle_pos[2]), True, alt_color)
             self.screen.blit(
-                text_obstacle, (obstacle_pos[0] * self.block_size, obstacle_pos[1] * self.block_size))
+                text_obstacle, (obstacle_pos[0] * BLOCK_SIZE, obstacle_pos[1] * BLOCK_SIZE))
 
     def __draw_target(self):
-        # def __draw_target(self, target_pos):
         target_col = (0, 255, 0)
         if (not self.targets_pos[0] in self.visited_targets):
-            target_pos = self._integers_to_coordinates(self.targets_pos[0])
-            pygame.draw.circle(self.screen, target_col, (target_pos[0] * self.block_size + (
-                self.block_size - 1)/2, target_pos[1] * self.block_size + (self.block_size - 1)/2), self.block_size/2, 5)
+            target_pos = self.__integers_to_coordinates(self.targets_pos[0])
+            pygame.draw.circle(self.screen, target_col, (target_pos[0] * BLOCK_SIZE + (
+                BLOCK_SIZE - 1)/2, target_pos[1] * BLOCK_SIZE + (BLOCK_SIZE - 1)/2), BLOCK_SIZE/2, 5)
 
     def __draw_house(self):
         col_wall = (255, 228, 225)
         col_door = (165, 42, 42)
         col_roof = (255, 0, 0)
 
-        start = self._integers_to_coordinates(self.start_pos)
-        wall = pygame.Rect(start[0] * self.block_size + (1/5) * self.block_size,
-                           start[1] * self.block_size + (2/3) * self.block_size, 20, 10)
-        door = pygame.Rect(start[0] * self.block_size + (1/2) * self.block_size,
-                           start[1] * self.block_size + (5/6) * self.block_size, 2, 5)
+        start = self.__integers_to_coordinates(self.start_pos)
+        wall = pygame.Rect(start[0] * BLOCK_SIZE + (1/5) * BLOCK_SIZE,
+                           start[1] * BLOCK_SIZE + (2/3) * BLOCK_SIZE, 20, 10)
+        door = pygame.Rect(start[0] * BLOCK_SIZE + (1/2) * BLOCK_SIZE,
+                           start[1] * BLOCK_SIZE + (5/6) * BLOCK_SIZE, 2, 5)
 
-        start_roof = (start[0] * self.block_size + (1/2) *
-                      self.block_size, start[1] * self.block_size)
-        roof_b = (start[0] * self.block_size + self.block_size,
-                  start[1] * self.block_size + (2/3) * self.block_size)
-        roof_c = (start[0] * self.block_size, start[1] *
-                  self.block_size + (2/3) * self.block_size)
+        start_roof = (start[0] * BLOCK_SIZE + (1/2) *
+                      BLOCK_SIZE, start[1] * BLOCK_SIZE)
+        roof_b = (start[0] * BLOCK_SIZE + BLOCK_SIZE,
+                  start[1] * BLOCK_SIZE + (2/3) * BLOCK_SIZE)
+        roof_c = (start[0] * BLOCK_SIZE, start[1] *
+                  BLOCK_SIZE + (2/3) * BLOCK_SIZE)
 
         pygame.draw.polygon(self.screen, col_roof,
                             (start_roof, roof_b, roof_c))
@@ -313,10 +261,10 @@ class ManagerEnv(Env):
         # for i in range(len(self.targets_pos)):
         #   self.__draw_target(self.targets_pos[i])
         # for i in range(len(self.drones)):
-        #   self.drones[i].draw_drone(screen, self.block_size)
+        #   self.drones[i].draw_drone(screen, BLOCK_SIZE)
 
         self.__draw_target()
-        self.drones[0].draw_drone(self.screen, self.block_size)
+        self.drones[0].draw_drone(self.screen, BLOCK_SIZE)
 
         # view = pygame.surfarray.array3d(screen)
         # view = view.transpose([1, 0, 2])
