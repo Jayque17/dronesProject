@@ -17,7 +17,6 @@ def displayQTable(Q):
         print(i, e)
 
 
-
 if __name__ == '__main__':
     files_ap = "files_ap/" #path linux thomas
     env = parser(files_ap + "test.ap")
