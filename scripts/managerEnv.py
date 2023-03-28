@@ -1,13 +1,11 @@
 import pygame
+import numpy as np
 
 from drone import Drone
 from actions import Actions
 
-WINDOW_HEIGHT = 768
-WINDOW_WIDTH = 1024
-BLOCK_SIZE = 30
-MAP_HEIGHT = 750
-MAP_WIDTH = 1020
+WINDOW_HEIGHT = 800
+WINDOW_WIDTH = 800
 
 class ManagerEnv(object):
     def __init__(self, nb_drones, map_real_dims, map_simu_dims, start_pos, targets_pos, obstacles_pos) -> None:
@@ -22,7 +20,7 @@ class ManagerEnv(object):
         self.targets_pos = [self.__coordinates_to_integers(targets_pos[0])]
         self.visited_targets = []
     
-        self.nb_drones = 1
+        self.nb_drones = 1 #nb_drones
         self.battery_actions = 100
         self.drones = [Drone(start_pos) for i in range(self.nb_drones)]
         self.drone_pos = self.__coordinates_to_integers(self.drones[0].pos)
@@ -37,6 +35,9 @@ class ManagerEnv(object):
         self.screen = None
         self.clock = None
         self.white = (255, 255, 255)
+        self.black = (0, 0, 0)
+        self.font_simu = None
+        self.block_size = WINDOW_WIDTH//2//self.max_w
 
     def reset(self, seed=None, options=None):
 
@@ -207,35 +208,52 @@ class ManagerEnv(object):
 
 
     def __draw_grid(self):
-        black = (0, 0, 0)
-        for x in range(0, MAP_WIDTH, BLOCK_SIZE):
-            for y in range(0, MAP_HEIGHT, BLOCK_SIZE):
-                rect = pygame.Rect(x, y, BLOCK_SIZE, BLOCK_SIZE)
-                pygame.draw.rect(self.screen, black, rect, 1)
+        for x in range(0, WINDOW_WIDTH, self.block_size):
+            for y in range(0, WINDOW_HEIGHT//2, self.block_size):
+                rect = pygame.Rect(x, y, self.block_size, self.block_size)
+                pygame.draw.rect(self.screen, self.black, rect, 1)
+    
+    def __draw_qtable(self, Qtable):
+        for y in range(0, self.max_h):
+            for x in range(0, self.max_w):
+                rect = pygame.Rect(x * self.block_size, WINDOW_HEIGHT//2 + 10 + y * self.block_size, self.block_size, self.block_size)
+                pygame.draw.rect(self.screen, self.black, rect, 1)
+
+                text_Qtable = self.font_simu.render(
+                    str(np.argmax(Qtable[self.__coordinates_to_integers((x,y))])), 
+                    True, 
+                    (255,0,0)
+                )
+                self.screen.blit(
+                text_Qtable, 
+                (x * self.block_size, 
+                 WINDOW_HEIGHT//2 + 10 + y * self.block_size))
+
+
+
+
 
     def __draw_obstacle(self, obstacle_pos):
 
-        font_simu = pygame.font.SysFont('liberationmono', BLOCK_SIZE, True)
-        black = (0, 0, 0)
         alt_color = (255, 195, 0)
-        for i in range(0, BLOCK_SIZE):
-            for j in range(0, BLOCK_SIZE):
+        for i in range(0, self.block_size):
+            for j in range(0, self.block_size):
                 if ((i % 2 == 0 and j % 2 == 0) or (i % 2 != 0 and j % 2 != 0)):
                     rect = pygame.Rect(
-                        obstacle_pos[0] * BLOCK_SIZE + j, obstacle_pos[1] * BLOCK_SIZE + i, 1, 1)
-                    pygame.draw.rect(self.screen, black, rect, 1)
-        if (int(obstacle_pos[2]) > 0 and font_simu != None):
-            text_obstacle = font_simu.render(
+                        obstacle_pos[0] * self.block_size + j, obstacle_pos[1] * self.block_size + i, 1, 1)
+                    pygame.draw.rect(self.screen, self.black, rect, 1)
+        if (int(obstacle_pos[2]) > 0 and self.font_simu != None):
+            text_obstacle = self.font_simu.render(
                 str(obstacle_pos[2]), True, alt_color)
             self.screen.blit(
-                text_obstacle, (obstacle_pos[0] * BLOCK_SIZE, obstacle_pos[1] * BLOCK_SIZE))
+                text_obstacle, (obstacle_pos[0] * self.block_size, obstacle_pos[1] * self.block_size))
 
     def __draw_target(self):
         target_col = (0, 255, 0)
         if (not self.targets_pos[0] in self.visited_targets):
             target_pos = self.__integers_to_coordinates(self.targets_pos[0])
-            pygame.draw.circle(self.screen, target_col, (target_pos[0] * BLOCK_SIZE + (
-                BLOCK_SIZE - 1)/2, target_pos[1] * BLOCK_SIZE + (BLOCK_SIZE - 1)/2), BLOCK_SIZE/2, 5)
+            pygame.draw.circle(self.screen, target_col, (target_pos[0] * self.block_size + (
+                self.block_size - 1)/2, target_pos[1] * self.block_size + (self.block_size - 1)/2), self.block_size/2, 5)
 
     def __draw_house(self):
         col_wall = (255, 228, 225)
@@ -243,24 +261,24 @@ class ManagerEnv(object):
         col_roof = (255, 0, 0)
 
         start = self.__integers_to_coordinates(self.start_pos)
-        wall = pygame.Rect(start[0] * BLOCK_SIZE + (1/5) * BLOCK_SIZE,
-                           start[1] * BLOCK_SIZE + (2/3) * BLOCK_SIZE, 20, 10)
-        door = pygame.Rect(start[0] * BLOCK_SIZE + (1/2) * BLOCK_SIZE,
-                           start[1] * BLOCK_SIZE + (5/6) * BLOCK_SIZE, 2, 5)
+        wall = pygame.Rect(start[0] * self.block_size + (1/5) * self.block_size,
+                           start[1] * self.block_size + (2/3) * self.block_size, 20, 10)
+        door = pygame.Rect(start[0] * self.block_size + (1/2) * self.block_size,
+                           start[1] * self.block_size + (5/6) * self.block_size, 2, 5)
 
-        start_roof = (start[0] * BLOCK_SIZE + (1/2) *
-                      BLOCK_SIZE, start[1] * BLOCK_SIZE)
-        roof_b = (start[0] * BLOCK_SIZE + BLOCK_SIZE,
-                  start[1] * BLOCK_SIZE + (2/3) * BLOCK_SIZE)
-        roof_c = (start[0] * BLOCK_SIZE, start[1] *
-                  BLOCK_SIZE + (2/3) * BLOCK_SIZE)
+        start_roof = (start[0] * self.block_size + (1/2) *
+                      self.block_size, start[1] * self.block_size)
+        roof_b = (start[0] * self.block_size + self.block_size,
+                  start[1] * self.block_size + (2/3) * self.block_size)
+        roof_c = (start[0] * self.block_size, start[1] *
+                  self.block_size + (2/3) * self.block_size)
 
         pygame.draw.polygon(self.screen, col_roof,
                             (start_roof, roof_b, roof_c))
         pygame.draw.rect(self.screen, col_wall, wall)
         pygame.draw.rect(self.screen, col_door, door)
 
-    def render(self):
+    def render(self, Qtable=None):
 
         if self.screen is None:
             pygame.init()
@@ -269,20 +287,24 @@ class ManagerEnv(object):
                 (WINDOW_WIDTH, WINDOW_HEIGHT))
         if self.clock is None:
             self.clock = pygame.time.Clock()
+        if self.font_simu is None:
+            self.font_simu = pygame.font.SysFont('liberationmono', self.block_size, True)
 
         self.screen.fill(self.white)
         self.__draw_grid()
         self.__draw_house()
+        # if(Qtable == None):
+        self.__draw_qtable(Qtable)
 
         for i in range(len(self.obstacles_pos)):
             self.__draw_obstacle(self.obstacles_pos[i])
         # for i in range(len(self.targets_pos)):
         #   self.__draw_target(self.targets_pos[i])
         # for i in range(len(self.drones)):
-        #   self.drones[i].draw_drone(screen, BLOCK_SIZE)
+        #   self.drones[i].draw_drone(screen, self.block_size)
 
         self.__draw_target()
-        self.drones[0].draw_drone(self.screen, BLOCK_SIZE)
+        self.drones[0].draw_drone(self.screen, self.block_size)
 
         # view = pygame.surfarray.array3d(screen)
         # view = view.transpose([1, 0, 2])
@@ -296,4 +318,4 @@ class ManagerEnv(object):
         pygame.event.pump()
         pygame.display.update()
 
-        # self.clock.tick(1)
+        self.clock.tick(0.8)

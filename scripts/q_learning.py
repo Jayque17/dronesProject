@@ -24,7 +24,7 @@ if __name__ == '__main__':
     st = env.reset()
     Q = [[0]*env.NB_ACTIONS]*env.NB_STATES
 
-    for i in range(1_000):
+    for i in range(100):
 
         st = env.reset()
         done = False
@@ -35,14 +35,14 @@ if __name__ == '__main__':
             stp1, reward, done, _ = env.step(action)
 
             print(i, st, reward, done)
-            #env.render()
+            env.render(Q)
             # Update Q
             action1 = take_action(stp1, Q, 0., env.NB_ACTIONS)
             Q[st][action] = Q[st][action] + 0.01*(reward + 0.9*Q[stp1][action1] - Q[st][action])
 
             st = stp1
     
-    displayQTable(Q)
+        displayQTable(Q)
 
     
     # 52 6
@@ -57,6 +57,6 @@ if __name__ == '__main__':
     #     print(stp1, reward, done)
     #     total += reward
     #     st = stp1
-    #     env.render()
+    #     env.render(Q)
     # print(total)
 
