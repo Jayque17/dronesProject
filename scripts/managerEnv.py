@@ -23,7 +23,7 @@ class ManagerEnv(object):
         self.max_h = self.map_simu_dims[1]
 
         self.start_pos = self.__coordinates_to_integers(start_pos)
-        self.targets_pos = [self.__coordinates_to_integers(targets_pos[0])]
+        self.targets_pos = [self.__coordinates_to_integers(p) for p in targets_pos]
         self.visited_targets = []
     
         self.nb_drones = 1 #nb_drones
@@ -169,10 +169,10 @@ class ManagerEnv(object):
         elif self.mapping_actions[action] == Actions.DO_TASK:
             print("do task")
             if (self.drones[drone_id].launched):
-                if (self.drone_pos == self.targets_pos[0] and self.targets_pos[0] not in self.visited_targets):
+                if (self.drone_pos in self.targets_pos and self.drone_pos not in self.visited_targets):
                     # PrintInDroneFile
                     reward = 5000
-                    self.visited_targets.append(self.targets_pos[0])
+                    self.visited_targets.append(self.drone_pos)
                 else:
                     reward = -10
             else:
@@ -187,7 +187,7 @@ class ManagerEnv(object):
                 reward = -50
 
         
-        if (self.__out_of_bounds(self.drones[drone_id].pos)):  # """or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]"""):
+        if (self.__out_of_bounds(self.drones[drone_id].pos)) or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]:
             print("Out of bounds", tmp_pos, self.drones[drone_id].pos)
             self.drones[drone_id].pos = tmp_pos
             done = True
@@ -198,11 +198,11 @@ class ManagerEnv(object):
         #   reward = -100
         #   done = True
 
-        elif self.targets_pos[0] in self.visited_targets and self.drone_pos == self.start_pos:
+        elif sorted(self.targets_pos) == sorted(self.visited_targets) and self.drone_pos == self.start_pos:
             # Targets done
             print("Targets done")
             done = True
-            reward = 100_000
+            reward = 100
 
         elif (self.battery_actions <= 0):
             # Battery outOfOrder
@@ -264,10 +264,11 @@ class ManagerEnv(object):
 
     def __draw_target(self):
         target_col = (0, 255, 0)
-        if (not self.targets_pos[0] in self.visited_targets):
-            target_pos = self.__integers_to_coordinates(self.targets_pos[0])
-            pygame.draw.circle(self.screen, target_col, (target_pos[0] * self.block_size + (
-                self.block_size - 1)/2, target_pos[1] * self.block_size + (self.block_size - 1)/2), self.block_size/2, 5)
+        for target in self.targets_pos:
+            if target not in self.visited_targets :
+                target_pos = self.__integers_to_coordinates(target)
+                pygame.draw.circle(self.screen, target_col, (target_pos[0] * self.block_size + (
+                    self.block_size - 1)/2, target_pos[1] * self.block_size + (self.block_size - 1)/2), self.block_size/2, 5)
 
     def __draw_house(self):
         col_wall = (255, 228, 225)
@@ -329,7 +330,7 @@ class ManagerEnv(object):
         # canvas = pygame.Surface((self.window_size, self.window_size))
         # canvas.fill((255, 255, 255))
         # self.window.blit(canvas, canvas.get_rect())
-        
+
         pygame.event.pump()
         pygame.display.update()
         for event in pygame.event.get():
