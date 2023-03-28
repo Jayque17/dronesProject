@@ -20,15 +20,15 @@ def displayQTable(Q):
 
 if __name__ == '__main__':
     # files_ap = "D:\dronesProject\\files_ap\\map_simu2997.ap" #path nader
-    files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
-    # files_ap = "files_ap/" #path linux thomas
-    env = parser(files_ap + "test2.ap")
+    # files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
+    files_ap = "files_ap/" #path linux thomas
+    env = parser(files_ap + "test.ap")
     st = env.reset()
 
     Q = np.zeros((env.NB_STATES, env.NB_ACTIONS))
     # displayQTable(Q)
     
-    for i in range(1000):
+    for i in range(15000):
 
         st = env.reset()
         done = False
@@ -70,6 +70,7 @@ if __name__ == '__main__':
             print("drone pos", d.pos)
 
         stp1, reward, done, _ = env.step(best_action)
+        Q[st][best_action] = - Q[st][best_action]
         print(stp1, reward, done)
         total += reward
         st = stp1

@@ -29,7 +29,7 @@ class ManagerEnv(object):
             self.__coordinates_to_integers(p) for p in targets_pos]
         self.visited_targets = []
     
-        self.nb_drones = nb_drones
+        self.nb_drones = 1 #nb_drones
         # self.battery_actions = 100
         self.drones = [Drone(start_pos) for i in range(self.nb_drones)]
         self.drone_pos = self.__coordinates_to_integers(self.drones[0].pos)
@@ -98,7 +98,7 @@ class ManagerEnv(object):
             # print("launch")
             if (not self.drones[drone_id].launched):
                 self.drones[drone_id].launched = True
-                reward = -10
+                reward = -20
                 # PrintInDroneFile
                 self.launched_drones.append(self.drones[drone_id])
             else:
@@ -175,10 +175,10 @@ class ManagerEnv(object):
             if (self.drones[drone_id].launched):
                 if (self.drone_pos in self.targets_pos and self.drone_pos not in self.visited_targets):
                     # PrintInDroneFile
-                    reward = 5000
+                    reward = 100
                     self.visited_targets.append(self.drone_pos)
                 else:
-                    reward = -10
+                    reward = -20
             else:
                 reward = -20
 
