@@ -257,7 +257,7 @@ class ManagerEnv(object):
                     rect = pygame.Rect(
                         obstacle_pos[0] * self.block_size + j, obstacle_pos[1] * self.block_size + i, 1, 1)
                     pygame.draw.rect(self.screen, self.black, rect, 1)
-        if (int(obstacle_pos[2]) > 0 and self.font_simu != None):
+        if (int(str(obstacle_pos[2]), base=16) > 0 and self.font_simu != None):
             text_obstacle = self.font_simu.render(
                 str(obstacle_pos[2]), True, alt_color)
             self.screen.blit(
