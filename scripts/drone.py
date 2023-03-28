@@ -3,7 +3,7 @@ import pygame
 class Drone():
   def __init__(self, start_pos) -> None:
     self.launched = True
-    self.battery = 20
+    self.battery = 100
     self.vect = 6
     self.altitude = 1
     self.rotations = [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]
