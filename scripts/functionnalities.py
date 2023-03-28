@@ -11,7 +11,7 @@ def parser(file_ap):
   for i in range(len(elems)):
     if elems[i][-1] == "\n":
       elems[i] = elems[i][:-1]
-  nb_drones = int(elems[0][0])
+  nb_drones = int(elems[0])
   map_meter = elems[1].split()
   map_width_meter = float(map_meter[0])
   map_height_meter = float(map_meter[1])

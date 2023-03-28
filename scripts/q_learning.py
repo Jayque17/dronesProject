@@ -20,7 +20,7 @@ def displayQTable(Q):
 
 if __name__ == '__main__':
     # files_ap = "D:\dronesProject\\files_ap\\map_simu2997.ap" #path nader
-    files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\projet_drones\\files_ap\\" #path windows julien
+    files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
     # files_ap = "files_ap/" #path linux thomas
     env = parser(files_ap + "test2.ap")
     st = env.reset()
