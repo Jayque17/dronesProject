@@ -33,6 +33,7 @@ class ManagerEnv(object):
         self.launched_drones = []
         
         self.obstacles_pos = obstacles_pos
+        print(self.obstacles_pos)
         
         self.NB_ACTIONS = len(Actions) * self.nb_drones
         self.mapping_actions = dict((item.value, item) for item in Actions)
@@ -223,9 +224,9 @@ class ManagerEnv(object):
 
 
     def __draw_grid(self):
-        for x in range(0, WINDOW_WIDTH, self.block_size):
-            for y in range(0, WINDOW_HEIGHT//2, self.block_size):
-                rect = pygame.Rect(x, y, self.block_size, self.block_size)
+        for y in range(0, self.max_h):
+            for x in range(0, self.max_w):
+                rect = pygame.Rect(x * self.block_size, y * self.block_size, self.block_size, self.block_size)
                 pygame.draw.rect(self.screen, self.black, rect, 1)
     
     def __draw_qtable(self, Qtable):
@@ -257,9 +258,9 @@ class ManagerEnv(object):
                     rect = pygame.Rect(
                         obstacle_pos[0] * self.block_size + j, obstacle_pos[1] * self.block_size + i, 1, 1)
                     pygame.draw.rect(self.screen, self.black, rect, 1)
-        if (int(str(obstacle_pos[2]), base=16) > 0 and self.font_simu != None):
+        if (str(obstacle_pos[2]) != '0' and self.font_simu != None):
             text_obstacle = self.font_simu.render(
-                str(obstacle_pos[2]), True, alt_color)
+                obstacle_pos[2], True, alt_color)
             self.screen.blit(
                 text_obstacle, (obstacle_pos[0] * self.block_size, obstacle_pos[1] * self.block_size))
 
