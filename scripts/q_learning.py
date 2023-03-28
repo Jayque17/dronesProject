@@ -34,28 +34,30 @@ if __name__ == '__main__':
             stp1, reward, done, _ = env.step(action)
 
             print(i, st, reward, done)
-            env.render(Q)
+            # env.render(Q)
             # Update Q
             action1 = take_action(stp1, Q, 0., env.NB_ACTIONS)
             Q[st][action] = Q[st][action] + 0.01*(reward + 0.9*Q[stp1][action1] - Q[st][action])
 
             st = stp1
     
-        displayQTable(Q)
+        # displayQTable(Q)
+    displayQTable(Q)
 
     
     # 52 6
     # check if qlearning really work
-    # total = 0 
-    # st = env.reset()
-    # while not done:
-    #     best_action = np.argmax(Q[st])
-    #     print("action", best_action)
-    #     print("drone pos", env.drones[0].pos)
-    #     stp1, reward, done, _ = env.step(best_action)
-    #     print(stp1, reward, done)
-    #     total += reward
-    #     st = stp1
-    #     env.render(Q)
-    # print(total)
+    total = 0 
+    done = False
+    st = env.reset()
+    while not done:
+        best_action = np.argmax(Q[st])
+        print("action", best_action)
+        print("drone pos", env.drones[0].pos)
+        stp1, reward, done, _ = env.step(best_action)
+        print(stp1, reward, done)
+        total += reward
+        st = stp1
+        env.render(Q)
+    print(total)
 
