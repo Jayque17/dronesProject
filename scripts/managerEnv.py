@@ -8,10 +8,12 @@ from actions import Actions
 WINDOW_HEIGHT = 800
 WINDOW_WIDTH = 800
 
+
 def distance_squared(pos1, pos2):
     x1, y1 = pos1
     x2, y2 = pos2
     return (x1 - x2) ** 2 + (y1 - y2) ** 2
+
 
 class ManagerEnv(object):
     def __init__(self, nb_drones, map_real_dims, map_simu_dims, start_pos, targets_pos, obstacles_pos) -> None:
@@ -23,17 +25,18 @@ class ManagerEnv(object):
         self.max_h = self.map_simu_dims[1]
 
         self.start_pos = self.__coordinates_to_integers(start_pos)
-        self.targets_pos = [self.__coordinates_to_integers(p) for p in targets_pos]
+        self.targets_pos = [
+            self.__coordinates_to_integers(p) for p in targets_pos]
         self.visited_targets = []
-    
-        self.nb_drones = 1 #nb_drones
+
+        self.nb_drones = 1  # nb_drones
         self.battery_actions = 100
         self.drones = [Drone(start_pos) for i in range(self.nb_drones)]
         self.drone_pos = self.__coordinates_to_integers(self.drones[0].pos)
         self.launched_drones = []
-        
+
         self.obstacles_pos = obstacles_pos
-        
+
         self.NB_ACTIONS = len(Actions) * self.nb_drones
         self.mapping_actions = dict((item.value, item) for item in Actions)
         self.NB_STATES = self.max_w * self.max_h
@@ -52,11 +55,13 @@ class ManagerEnv(object):
         # self.nb_drones = self.nb_drones
         # self.drones = [Drone(self.start_pos) for i in range(self.nb_drones)]
         self.drone_pos = self.start_pos
-        self.drones = [Drone(self.__integers_to_coordinates(self.start_pos)) for i in range(self.nb_drones)]
+        self.drones = [Drone(self.__integers_to_coordinates(
+            self.start_pos)) for i in range(self.nb_drones)]
         self.visited_targets = []
         self.battery_actions = 1000
-        
-        self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), self.drones[0].pos) for target in self.targets_pos]
+
+        self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(
+            target), self.drones[0].pos) for target in self.targets_pos]
         return self.drone_pos
 
     def __out_of_bounds(self, pos):
@@ -186,8 +191,7 @@ class ManagerEnv(object):
             else:
                 reward = -50
 
-        
-        if (self.__out_of_bounds(self.drones[drone_id].pos)) or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]:
+        if (self.__out_of_bounds(self.drones[drone_id].pos)) or self.drones[drone_id].pos in [(p[0], p[1]) for p in self.obstacles_pos]:
             print("Out of bounds", tmp_pos, self.drones[drone_id].pos)
             self.drones[drone_id].pos = tmp_pos
             done = True
@@ -209,43 +213,55 @@ class ManagerEnv(object):
             print("Battery outOfOrder")
             reward = -100
             done = True
-        
+
         # reward drone if it gets closer to one of the targets
         last_distance = self.distance_to_targets
-        self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), self.drones[0].pos) for target in self.targets_pos]
+        self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(
+            target), self.drones[0].pos) for target in self.targets_pos]
         if last_distance > self.distance_to_targets:
             reward += 5
 
-
-        self.drone_pos = self.__coordinates_to_integers(self.drones[drone_id].pos)
+        self.drone_pos = self.__coordinates_to_integers(
+            self.drones[drone_id].pos)
         return (self.drone_pos, reward, done, {})
-
 
     def __draw_grid(self):
         for x in range(0, WINDOW_WIDTH, self.block_size):
             for y in range(0, WINDOW_HEIGHT//2, self.block_size):
                 rect = pygame.Rect(x, y, self.block_size, self.block_size)
                 pygame.draw.rect(self.screen, self.black, rect, 1)
-    
+
     def __draw_qtable(self, Qtable):
         for y in range(0, self.max_h):
             for x in range(0, self.max_w):
-                rect = pygame.Rect(x * self.block_size, WINDOW_HEIGHT//2 + 10 + y * self.block_size, self.block_size, self.block_size)
+                n = np.argmax(Qtable[self.__coordinates_to_integers((x, y))])
+                drone_id = n // len(Actions)
+                action = Actions(n % len(Actions))
+
+                rect = pygame.Rect(x * self.block_size, WINDOW_HEIGHT//2 +
+                                   10 + y * self.block_size, self.block_size, self.block_size)
                 pygame.draw.rect(self.screen, self.black, rect, 1)
 
                 text_Qtable = self.font_simu.render(
-                    str(np.argmax(Qtable[self.__coordinates_to_integers((x,y))])), 
-                    True, 
-                    (255,0,0)
+                    str(drone_id),
+                    True,
+                    (255, 0, 0)
                 )
+
+                colors = [pygame.Color(255, 0, 0), pygame.Color(255, 255, 0), pygame.Color(0, 255, 0), pygame.Color(
+                    0, 255, 255), pygame.Color(0, 0, 255), pygame.Color(255, 0, 255), pygame.Color(255, 0, 0)]
+
+                if action in [Actions.BACKWARDS, Actions.FORWARD, Actions.LEFT, Actions.RIGHT]:
+                    self.screen.blit(pygame.transform.rotate(self.scaled_arrow, 90. * (
+                        action.value % 4)), (x * self.block_size, WINDOW_HEIGHT//2 + 10 + y * self.block_size))
+                elif action in [Actions.LAUNCH, Actions.LAND, Actions.DO_TASK]:
+                    pygame.draw.circle(self.screen, colors[action.value % 4], (x * self.block_size + self.block_size //
+                                       2, WINDOW_HEIGHT//2 + 10 + y * self.block_size + self.block_size//2), self.block_size//2)
+
                 self.screen.blit(
-                text_Qtable, 
-                (x * self.block_size, 
-                 WINDOW_HEIGHT//2 + 10 + y * self.block_size))
-
-
-
-
+                    text_Qtable,
+                    (x * self.block_size,
+                     WINDOW_HEIGHT//2 + 10 + y * self.block_size))
 
     def __draw_obstacle(self, obstacle_pos):
 
@@ -265,7 +281,7 @@ class ManagerEnv(object):
     def __draw_target(self):
         target_col = (0, 255, 0)
         for target in self.targets_pos:
-            if target not in self.visited_targets :
+            if target not in self.visited_targets:
                 target_pos = self.__integers_to_coordinates(target)
                 pygame.draw.circle(self.screen, target_col, (target_pos[0] * self.block_size + (
                     self.block_size - 1)/2, target_pos[1] * self.block_size + (self.block_size - 1)/2), self.block_size/2, 5)
@@ -300,10 +316,16 @@ class ManagerEnv(object):
             pygame.display.init()
             self.screen = pygame.display.set_mode(
                 (WINDOW_WIDTH, WINDOW_HEIGHT))
+            arrow = pygame.Surface((350, 350), pygame.SRCALPHA, 32)
+            pygame.draw.polygon(arrow, (0, 0, 0), ((
+                25, 125), (25, 225), (225, 225), (225, 325), (325, 175), (225, 25), (225, 125)))
+            self.scaled_arrow = pygame.transform.scale(
+                arrow, (self.block_size, self.block_size))
         if self.clock is None:
             self.clock = pygame.time.Clock()
         if self.font_simu is None:
-            self.font_simu = pygame.font.SysFont('liberationmono', self.block_size, True)
+            self.font_simu = pygame.font.SysFont(
+                'liberationmono', self.block_size, True)
 
         self.screen.fill(self.white)
         self.__draw_grid()
@@ -331,7 +353,7 @@ class ManagerEnv(object):
         # canvas.fill((255, 255, 255))
         # self.window.blit(canvas, canvas.get_rect())
 
-        pygame.event.pump()
+        # pygame.event.pump()
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:

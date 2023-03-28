@@ -1,12 +1,12 @@
 from enum import Enum
 
 class Actions(Enum) :
-    LAUNCH        = 0
-    LAND          = 1
-    FORWARD       = 2
-    RIGHT         = 3
-    BACKWARDS     = 4
-    LEFT          = 5
+    RIGHT         = 0
+    BACKWARDS     = 1
+    LEFT          = 2
+    FORWARD       = 3
+    LAUNCH        = 4
+    LAND          = 5
     DO_TASK       = 6 
     # ROTATE_RIGHT  = 5
     # ROTATE_LEFT   = 6
