@@ -42,17 +42,18 @@ if __name__ == '__main__':
     for i, e in enumerate(Q):
         print(i, e)
     
+    # 52 6
     # check if qlearning really work
-    total = 0 
-    st = env.reset()
-    while not done:
-        best_action = np.argmax(Q[st])
-        print("action", best_action)
-        print("drone pos", env.drones[0].pos)
-        stp1, reward, done, _ = env.step(best_action)
-        print(stp1, reward, done)
-        total += reward
-        st = stp1
-        env.render()
-    print(total)
+    # total = 0 
+    # st = env.reset()
+    # while not done:
+    #     best_action = np.argmax(Q[st])
+    #     print("action", best_action)
+    #     print("drone pos", env.drones[0].pos)
+    #     stp1, reward, done, _ = env.step(best_action)
+    #     print(stp1, reward, done)
+    #     total += reward
+    #     st = stp1
+    #     env.render()
+    # print(total)
 

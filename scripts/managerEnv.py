@@ -128,6 +128,7 @@ class ManagerEnv(object):
             print("rotate right")
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].rotate(1)
+                reward = -15
                 # PrintInDroneFile
             else:
                 reward = -20
@@ -136,6 +137,7 @@ class ManagerEnv(object):
             print("rotate left")
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].rotate(-1)
+                reward = -15
                 # PrintInDroneFile
             else:
                 reward = -20
@@ -161,7 +163,7 @@ class ManagerEnv(object):
             if (self.drones[drone_id].launched):
                 if (self.drone_pos == self.targets_pos[0] and self.targets_pos[0] not in self.visited_targets):
                     # PrintInDroneFile
-                    reward = 50
+                    reward = 5000
                     self.visited_targets.append(self.targets_pos[0])
                 else:
                     reward = -10
@@ -192,7 +194,7 @@ class ManagerEnv(object):
             # Targets done
             print("Targets done")
             done = True
-            reward = 100
+            reward = 100_000
 
         elif (self.battery_actions <= 0):
             # Battery outOfOrder
