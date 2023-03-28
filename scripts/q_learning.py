@@ -1,4 +1,5 @@
 from time import sleep
+import time
 import numpy as np
 from random import randint, uniform
 import managerEnv
@@ -21,8 +22,10 @@ if __name__ == '__main__':
     files_ap = "files_ap/" #path linux thomas
     env = parser(files_ap + "test.ap")
     st = env.reset()
-    Q = [[0]*env.NB_ACTIONS]*env.NB_STATES
 
+    Q = np.zeros((env.NB_STATES, env.NB_ACTIONS))
+    displayQTable(Q)
+    
     for i in range(100):
 
         st = env.reset()
@@ -33,15 +36,23 @@ if __name__ == '__main__':
             action = take_action(st, Q, 0.8, env.NB_ACTIONS)
             stp1, reward, done, _ = env.step(action)
 
+            print("_________________________________________________________"*3)
             print(i, st, reward, done)
             # env.render(Q)
+
             # Update Q
             action1 = take_action(stp1, Q, 0., env.NB_ACTIONS)
-            Q[st][action] = Q[st][action] + 0.01*(reward + 0.9*Q[stp1][action1] - Q[st][action])
+            #displayQTable(Q)
+
+            value = Q[st][action] + 0.01*(reward + 0.9*Q[stp1][action1] - Q[st][action])
+            Q[st][action] = value
 
             st = stp1
-    
-        # displayQTable(Q)
+            print("st", st)
+            print("action", action)
+            print("value", value)
+            #displayQTable(Q)
+
     displayQTable(Q)
 
     

@@ -1,3 +1,4 @@
+import sys
 import pygame
 import numpy as np
 
@@ -328,7 +329,11 @@ class ManagerEnv(object):
         # canvas = pygame.Surface((self.window_size, self.window_size))
         # canvas.fill((255, 255, 255))
         # self.window.blit(canvas, canvas.get_rect())
+        
         pygame.event.pump()
         pygame.display.update()
-
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
         self.clock.tick(0.8)
