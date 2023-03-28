@@ -23,7 +23,7 @@ class ManagerEnv(object):
         self.visited_targets = []
     
         self.nb_drones = 1
-        self.battery_actions = 1000
+        self.battery_actions = 100
         self.drones = [Drone(start_pos) for i in range(self.nb_drones)]
         self.drone_pos = self.__coordinates_to_integers(self.drones[0].pos)
         self.launched_drones = []
@@ -124,39 +124,39 @@ class ManagerEnv(object):
             else:
                 reward = -20
 
-        elif self.mapping_actions[action] == Actions.ROTATE_RIGHT:
-            print("rotate right")
-            if (self.drones[drone_id].launched):
-                self.drones[drone_id].rotate(1)
-                reward = -15
-                # PrintInDroneFile
-            else:
-                reward = -20
+        # elif self.mapping_actions[action] == Actions.ROTATE_RIGHT:
+        #     print("rotate right")
+        #     if (self.drones[drone_id].launched):
+        #         self.drones[drone_id].rotate(1)
+        #         reward = -15
+        #         # PrintInDroneFile
+        #     else:
+        #         reward = -20
 
-        elif self.mapping_actions[action] == Actions.ROTATE_LEFT:
-            print("rotate left")
-            if (self.drones[drone_id].launched):
-                self.drones[drone_id].rotate(-1)
-                reward = -15
-                # PrintInDroneFile
-            else:
-                reward = -20
+        # elif self.mapping_actions[action] == Actions.ROTATE_LEFT:
+        #     print("rotate left")
+        #     if (self.drones[drone_id].launched):
+        #         self.drones[drone_id].rotate(-1)
+        #         reward = -15
+        #         # PrintInDroneFile
+        #     else:
+        #         reward = -20
 
-        elif self.mapping_actions[action] == Actions.UP:
-            print("up")
-            if (self.drones[drone_id].launched):
-                # PrintInDroneFile
-                self.drones[drone_id].up()
-            else:
-                reward = -20
+        # elif self.mapping_actions[action] == Actions.UP:
+        #     print("up")
+        #     if (self.drones[drone_id].launched):
+        #         # PrintInDroneFile
+        #         self.drones[drone_id].up()
+        #     else:
+        #         reward = -20
 
-        elif self.mapping_actions[action] == Actions.DOWN:
-            print("down")
-            if (self.drones[drone_id].launched):
-                # PrintInDroneFile
-                self.drones[drone_id].down()
-            else:
-                reward = -20
+        # elif self.mapping_actions[action] == Actions.DOWN:
+        #     print("down")
+        #     if (self.drones[drone_id].launched):
+        #         # PrintInDroneFile
+        #         self.drones[drone_id].down()
+        #     else:
+        #         reward = -20
 
         elif self.mapping_actions[action] == Actions.DO_TASK:
             print("do task")
@@ -296,4 +296,4 @@ class ManagerEnv(object):
         pygame.event.pump()
         pygame.display.update()
 
-        self.clock.tick(6)
+        # self.clock.tick(1)
