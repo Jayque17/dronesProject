@@ -7,6 +7,11 @@ from actions import Actions
 WINDOW_HEIGHT = 800
 WINDOW_WIDTH = 800
 
+def distance_squared(pos1, pos2):
+    x1, y1 = pos1
+    x2, y2 = pos2
+    return (x1 - x2) ** 2 + (y1 - y2) ** 2
+
 class ManagerEnv(object):
     def __init__(self, nb_drones, map_real_dims, map_simu_dims, start_pos, targets_pos, obstacles_pos) -> None:
 
@@ -49,7 +54,8 @@ class ManagerEnv(object):
         self.drones = [Drone(self.__integers_to_coordinates(self.start_pos)) for i in range(self.nb_drones)]
         self.visited_targets = []
         self.battery_actions = 1000
-
+        
+        self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), self.drones[0].pos) for target in self.targets_pos]
         return self.drone_pos
 
     def __out_of_bounds(self, pos):
@@ -184,7 +190,7 @@ class ManagerEnv(object):
             print("Out of bounds", tmp_pos, self.drones[drone_id].pos)
             self.drones[drone_id].pos = tmp_pos
             done = True
-            reward = -1000
+            reward = -100
 
         # elif (self.drones[drone_id].battery <= 0):
         #   #print("Battery done")
@@ -202,6 +208,13 @@ class ManagerEnv(object):
             print("Battery outOfOrder")
             reward = -100
             done = True
+        
+        # reward drone if it gets closer to one of the targets
+        last_distance = self.distance_to_targets
+        self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), self.drones[0].pos) for target in self.targets_pos]
+        if last_distance > self.distance_to_targets:
+            reward += 5
+
 
         self.drone_pos = self.__coordinates_to_integers(self.drones[drone_id].pos)
         return (self.drone_pos, reward, done, {})
