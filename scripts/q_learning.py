@@ -21,13 +21,13 @@ if __name__ == '__main__':
     Q = [[0]*env.NB_ACTIONS]*env.NB_STATES
     print(env.NB_STATES)
 
-    for _ in range(10_000):
+    for i in range(10_000):
         # Take an action
         action = take_action(st, Q, 0.3, env.NB_ACTIONS)
         stp1, reward, done, _ = env.step(action)
 
-        print(st, reward, done)
-        env.render()
+        print(i, st, reward, done)
+        # env.render()
         # Update Q
         print("trop grand ? ", stp1)
         action1 = take_action(stp1, Q, 0., env.NB_ACTIONS)
@@ -36,7 +36,23 @@ if __name__ == '__main__':
         st = stp1
         
         if done:
+            print('RESET')
             st = env.reset()
 
     for i, e in enumerate(Q):
         print(i, e)
+    
+    # check if qlearning really work
+    total = 0 
+    st = env.reset()
+    while not done:
+        best_action = np.argmax(Q[st])
+        print("action", best_action)
+        print("drone pos", env.drones[0].pos)
+        stp1, reward, done, _ = env.step(best_action)
+        print(stp1, reward, done)
+        total += reward
+        st = stp1
+        env.render()
+    print(total)
+

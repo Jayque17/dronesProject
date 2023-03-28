@@ -17,16 +17,16 @@ class ManagerEnv(object):
 
         self.max_w = self.map_simu_dims[0]
         self.max_h = self.map_simu_dims[1]
-    
-        self.nb_drones = 1
-        self.battery_actions = 1000
-        self.drones = [Drone(start_pos) for i in range(nb_drones)]
-        self.drone_pos = self.__coordinates_to_integers(self.drones[0].pos)
-        self.launched_drones = []
-        
+
         self.start_pos = self.__coordinates_to_integers(start_pos)
         self.targets_pos = [self.__coordinates_to_integers(targets_pos[0])]
         self.visited_targets = []
+    
+        self.nb_drones = 1
+        self.battery_actions = 1000
+        self.drones = [Drone(start_pos) for i in range(self.nb_drones)]
+        self.drone_pos = self.__coordinates_to_integers(self.drones[0].pos)
+        self.launched_drones = []
         
         self.obstacles_pos = obstacles_pos
         
@@ -45,6 +45,7 @@ class ManagerEnv(object):
         # self.nb_drones = self.nb_drones
         # self.drones = [Drone(self.start_pos) for i in range(self.nb_drones)]
         self.drone_pos = self.start_pos
+        self.drones = [Drone(self.__integers_to_coordinates(self.start_pos)) for i in range(self.nb_drones)]
         self.visited_targets = []
         self.battery_actions = 1000
 
@@ -67,6 +68,7 @@ class ManagerEnv(object):
         return (x, y)
 
     def step(self, action):
+        print('battery=', self.battery_actions)
         self.battery_actions -= 1
 
         reward = -1
