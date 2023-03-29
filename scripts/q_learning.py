@@ -1,8 +1,7 @@
 from time import sleep
-import time
 import numpy as np
 from random import randint, uniform
-import managerEnv
+import matplotlib.pyplot as plt
 from functionnalities import *
 
 def take_action(st, Q, eps, nb_actions):
@@ -17,6 +16,35 @@ def displayQTable(Q):
     for i, e in enumerate(Q):
         print(i, e)
 
+def getInfoRewardAndBattery(listeRewardsBatteryEpisode, droneBatterry, totalReward, episode):
+    listeRewardsBatteryEpisode.append((episode, droneBatterry, totalReward))
+
+def plot(listeRewardsBatteryEpisode):
+    episode = []
+    droneBatterry = []
+    totalReward = []
+    for i in range(len(listeRewardsBatteryEpisode)):
+        episode.append(listeRewardsBatteryEpisode[i][0])
+        droneBatterry.append(listeRewardsBatteryEpisode[i][1])
+        # print('reward',listeRewardsBatteryEpisode[i][2])
+        totalReward.append(listeRewardsBatteryEpisode[i][2])
+    
+    # fig, (ax1, ax2) = plt.subplots(1, 2)
+    # fig.suptitle('Rewards and Battery level by episodes')
+    # ax1.plot(episode, droneBatterry)
+    # ax2.plot(episode, totalReward)
+    # fig.show()
+
+    plt.subplot(2, 1, 1)
+    plt.plot(episode, droneBatterry)
+
+    plt.subplot(2, 1, 2)
+    plt.plot(episode, totalReward)
+
+    plt.show()
+
+
+
 
 if __name__ == '__main__':
     # files_ap = "D:\dronesProject\\files_ap\\map_simu2997.ap" #path nader
@@ -27,15 +55,18 @@ if __name__ == '__main__':
 
     Q = np.zeros((env.NB_STATES, env.NB_ACTIONS))
     # displayQTable(Q)
+
+    listeRewardsBatteryEpisode = []
+    totalReward = 0
     
-    for i in range(1_000):
+    for i in range(1000):
 
         st = env.reset()
         done = False
 
         while not done:
             # Take an action
-            action = take_action(st, Q, 0.8, env.NB_ACTIONS)
+            action = take_action(st, Q, 0.6, env.NB_ACTIONS)
             stp1, reward, done, _ = env.step(action)
 
             # print("_________________________________________________________"*3)
@@ -55,7 +86,14 @@ if __name__ == '__main__':
             # print("value", value)
             #displayQTable(Q)
 
+            totalReward += reward
+            # print('total', totalReward)
+            if done:
+                getInfoRewardAndBattery(listeRewardsBatteryEpisode, env.drones[0].battery, totalReward, i+1)
+                totalReward = 0
+
     displayQTable(Q)
+    plot(listeRewardsBatteryEpisode)
 
     
     # 52 6
@@ -76,4 +114,5 @@ if __name__ == '__main__':
         st = stp1
         env.render(Q)
     print(total)
+
 
