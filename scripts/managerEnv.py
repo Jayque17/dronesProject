@@ -29,7 +29,7 @@ class ManagerEnv(object):
             self.__coordinates_to_integers(p) for p in targets_pos]
         self.visited_targets = []
     
-        self.nb_drones = nb_drones
+        self.nb_drones = 1 #nb_drones
         # self.battery_actions = 100
         self.drones = [Drone(start_pos) for i in range(self.nb_drones)]
         self.drone_pos = self.__coordinates_to_integers(self.drones[0].pos)
