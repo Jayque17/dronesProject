@@ -26,6 +26,7 @@ def plot(listeRewardsBatteryEpisode):
     for i in range(len(listeRewardsBatteryEpisode)):
         episode.append(listeRewardsBatteryEpisode[i][0])
         droneBatterry.append(listeRewardsBatteryEpisode[i][1])
+        # print('reward',listeRewardsBatteryEpisode[i][2])
         totalReward.append(listeRewardsBatteryEpisode[i][2])
     
     # fig, (ax1, ax2) = plt.subplots(1, 2)
@@ -58,14 +59,14 @@ if __name__ == '__main__':
     listeRewardsBatteryEpisode = []
     totalReward = 0
     
-    for i in range(1_000):
+    for i in range(1000):
 
         st = env.reset()
         done = False
 
         while not done:
             # Take an action
-            action = take_action(st, Q, 0.8, env.NB_ACTIONS)
+            action = take_action(st, Q, 0.6, env.NB_ACTIONS)
             stp1, reward, done, _ = env.step(action)
 
             # print("_________________________________________________________"*3)
@@ -86,8 +87,10 @@ if __name__ == '__main__':
             #displayQTable(Q)
 
             totalReward += reward
+            # print('total', totalReward)
             if done:
                 getInfoRewardAndBattery(listeRewardsBatteryEpisode, env.drones[0].battery, totalReward, i+1)
+                totalReward = 0
 
     displayQTable(Q)
     plot(listeRewardsBatteryEpisode)
