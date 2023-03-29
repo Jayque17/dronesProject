@@ -22,7 +22,7 @@ if __name__ == '__main__':
     # files_ap = "D:\dronesProject\\files_ap\\map_simu2997.ap" #path nader
     # files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
     files_ap = "files_ap/" #path linux thomas
-    env = parser(files_ap + "test.ap")
+    env = parser(files_ap + "test3.ap")
     st = env.reset()
 
     Q = np.zeros((env.NB_STATES, env.NB_ACTIONS))
