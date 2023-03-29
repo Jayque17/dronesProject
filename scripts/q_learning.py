@@ -28,7 +28,7 @@ if __name__ == '__main__':
     Q = np.zeros((env.NB_STATES, env.NB_ACTIONS))
     # displayQTable(Q)
     
-    for i in range(15000):
+    for i in range(1_000):
 
         st = env.reset()
         done = False
