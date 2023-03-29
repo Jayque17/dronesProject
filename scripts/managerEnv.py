@@ -26,8 +26,8 @@ class ManagerEnv(object):
 
         self.start_pos = self.__coordinates_to_integers(start_pos)
         self.targets_pos = [
-            #self.__coordinates_to_integers(p) for p in targets_pos]
-            self.__coordinates_to_integers(targets_pos[0])]
+            self.__coordinates_to_integers(p) for p in targets_pos]
+            # self.__coordinates_to_integers(targets_pos[0])]
         self.visited_targets = []
     
         self.nb_drones = 1 #nb_drones
