@@ -58,7 +58,7 @@ if __name__ == '__main__':
     listeRewardsBatteryEpisode = []
     totalReward = 0
     
-    for i in range(1000):
+    for i in range(1_000):
 
         st = env.reset()
         done = False
@@ -105,6 +105,7 @@ if __name__ == '__main__':
             print("drone pos", d.pos)
 
         stp1, reward, done, _ = env.step(best_action)
+        Q[st][best_action] = - Q[st][best_action]
         print(stp1, reward, done)
         total += reward
         st = stp1
