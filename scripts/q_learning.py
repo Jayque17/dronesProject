@@ -42,10 +42,10 @@ def plot(listeRewardsBatteryEpisode):
 
 
 if __name__ == '__main__':
-    files_ap = "D:\\dronesProject\\files_ap\\map_simu2997.ap"  # path nader
+    # files_ap = "D:\\dronesProject\\files_ap\\map_simu2997.ap"  # path nader
     # files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
-    # files_ap = "files_ap/" #path linux thomas
-    env = parser(files_ap)
+    files_ap = "files_ap/" #path linux thomas
+    env = parser(files_ap + "map_simu2997.ap")
     st = env.reset()
 
     # displayQTable(Q)
@@ -106,11 +106,12 @@ if __name__ == '__main__':
     done = 0
     st = env.reset()
     j = 0
-
+    action_list = []
     for j in range(len(Q)):
         done = 0
         while not done:
             best_action = np.argmax(Q[j][st])
+            action_list.append(best_action)
             print("action", best_action)
             for d in env.drones:
                 print("drone pos", d.pos)
@@ -122,3 +123,4 @@ if __name__ == '__main__':
             st = stp1
             env.render(Q[j])
     print(total)
+    print(action_list)
