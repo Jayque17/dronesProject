@@ -1,17 +1,18 @@
 from enum import Enum
 
 class Actions(Enum) :
-    LAUNCH        = 0
-    FORWARD       = 1
-    RIGHT         = 2
-    BACKWARDS     = 3
-    LEFT          = 4
-    ROTATE_RIGHT  = 5
-    ROTATE_LEFT   = 6
-    UP            = 7
-    DOWN          = 8
-    DO_TASK       = 9 
-    LAND          = 10
+    RIGHT         = 0
+    BACKWARDS     = 1
+    LEFT          = 2
+    FORWARD       = 3
+    LAUNCH        = 4
+    LAND          = 5
+    DO_TASK       = 6 
+    # ROTATE_RIGHT  = 5
+    # ROTATE_LEFT   = 6
+    # UP            = 7
+    # DOWN          = 8
+
 
 """ 
 Different possible actions :

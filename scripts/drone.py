@@ -3,12 +3,12 @@ import pygame
 class Drone():
   def __init__(self, start_pos) -> None:
     self.launched = True
-    self.battery = 20
-    self.vect = 0
+    self.battery = 100
+    self.vect = 6
     self.altitude = 1
     self.rotations = [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]
     self.pos = start_pos
-    self.current_rot = self.rotations[0]
+    self.current_rot = self.rotations[self.vect]
 
   def rotate(self, dir):
     self.vect = (self.vect + dir) % 8
@@ -49,8 +49,8 @@ class Drone():
     blue = (0, 0, 255)
     arrow_col = (199,21,133)
 
-    x =  self.pos[0] * block_size + block_size/2
-    y =  self.pos[1] * block_size + block_size/2
+    x =  self.pos[0] * block_size[0] + block_size[0]/2
+    y =  self.pos[1] * block_size[1] + block_size[1]/2
     circle = pygame.draw.circle(screen, blue, (x, y), radius)
     
     # Est
