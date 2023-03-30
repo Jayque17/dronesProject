@@ -40,10 +40,10 @@ def plot(listeRewardsBatteryEpisode):
 
 
 if __name__ == '__main__':
-    # files_ap = "D:\dronesProject\\files_ap\\map_simu2997.ap" #path nader
-    files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
+    files_ap = "D:\\dronesProject\\files_ap\\map_simu2997.ap" #path nader
+    #files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
     # files_ap = "files_ap/" #path linux thomas
-    env = parser(files_ap + "test.ap")
+    env = parser(files_ap)
     st = env.reset()
 
     Q = np.zeros((env.NB_STATES, env.NB_ACTIONS))
@@ -51,13 +51,14 @@ if __name__ == '__main__':
 
     listeRewardsBatteryEpisode = []
     totalReward = 0
+    done = 0
     
     for i in range(1000):
 
-        st = env.reset()
-        done = False
+        st = env.reset(options= (done!=0))
+        done = 0
 
-        while not done:
+        while done == 0:
             # Take an action
             action = take_action(st, Q, 0.6, env.NB_ACTIONS)
             stp1, reward, done, _ = env.step(action)
@@ -81,7 +82,7 @@ if __name__ == '__main__':
 
             totalReward += reward
             # print('total', totalReward)
-            if done:
+            if done == 2:
                 getInfoRewardAndBattery(listeRewardsBatteryEpisode, env.drones[0].battery, totalReward, i+1)
                 totalReward = 0
 
@@ -94,7 +95,7 @@ if __name__ == '__main__':
     total = 0 
     done = False
     st = env.reset()
-    while not done:
+    while done == 0:
         best_action = np.argmax(Q[st])
         print("action", best_action)
         for d in env.drones:

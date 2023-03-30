@@ -1,4 +1,3 @@
-#from https://github.com/thibo73800/aihub/blob/master/rl/grid_world_q_learning.py
 
 import numpy as np
 from random import randint

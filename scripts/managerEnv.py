@@ -23,6 +23,7 @@ class ManagerEnv(object):
 
         self.max_w = self.map_simu_dims[0]
         self.max_h = self.map_simu_dims[1]
+        self.nearReward = 10
 
         self.start_pos = self.__coordinates_to_integers(start_pos)
         self.targets_pos = [
@@ -48,19 +49,16 @@ class ManagerEnv(object):
         self.font_simu = None
         self.block_size = (WINDOW_WIDTH//self.max_w, WINDOW_HEIGHT//2//self.max_h)
 
-    def reset(self, seed=None, options=None):
+    def reset(self, seed=None, options=False):
 
         self.state = 0
-        self.launched_drones = []
-        # self.nb_drones = self.nb_drones
-        # self.drones = [Drone(self.start_pos) for i in range(self.nb_drones)]
-        self.drone_pos = self.start_pos
-        self.drones = [Drone(self.__integers_to_coordinates(
-            self.start_pos)) for i in range(self.nb_drones)]
-        self.visited_targets = []
-        # self.battery_actions = 1000
-        
-        self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), drone.pos) for target in self.targets_pos for drone in self.drones]
+        if options == False:
+            self.launched_drones = []
+            self.drone_pos = self.start_pos
+            self.drones = [Drone(self.__integers_to_coordinates(
+                self.start_pos)) for i in range(self.nb_drones)]
+            self.visited_targets = []
+            self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), drone.pos) for target in self.targets_pos for drone in self.drones]
         return self.drone_pos
 
     def __out_of_bounds(self, pos):
@@ -83,8 +81,8 @@ class ManagerEnv(object):
         # print('battery=', self.battery_actions)
         # self.battery_actions -= 1
 
-        reward = -1
-        done = False
+        reward = -10
+        done = 0
 
         if not (0 <= action < self.NB_ACTIONS):
             return
@@ -177,6 +175,7 @@ class ManagerEnv(object):
                 if (self.drone_pos in self.targets_pos and self.drone_pos not in self.visited_targets):
                     # PrintInDroneFile
                     reward = 100
+                    done = 1
                     self.visited_targets.append(self.drone_pos)
                 else:
                     reward = -20
@@ -196,18 +195,18 @@ class ManagerEnv(object):
         if (self.__out_of_bounds(self.drones[drone_id].pos)) or self.drones[drone_id].pos in [(p[0],p[1]) for p in self.obstacles_pos]:
             # print("Out of bounds", tmp_pos, self.drones[drone_id].pos)
             self.drones[drone_id].pos = tmp_pos
-            done = True
+            done = 2
             reward = -100
 
         elif (self.drones[drone_id].battery <= 0):
           #print("Battery done")
           reward = -100
-          done = True
+          done = 2
 
         elif sorted(self.targets_pos) == sorted(self.visited_targets) and self.drone_pos == self.start_pos:
             # Targets done
             # print("Targets done")
-            done = True
+            done = 2
             reward = 1000
 
         # elif (self.battery_actions <= 0):
@@ -217,14 +216,14 @@ class ManagerEnv(object):
         #     done = True
         
         # reward drone if it gets closer to one of the targets
-        last_distance = self.distance_to_targets
-        self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), drone.pos) for target in self.targets_pos for drone in self.drones]
-        if last_distance > self.distance_to_targets:
-            reward += 5
+        # last_distance = self.distance_to_targets
+        # self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), drone.pos) for target in self.targets_pos for drone in self.drones]
+        # if last_distance > self.distance_to_targets:
+        #     reward += self.nearReward * 1.5
 
         self.drone_pos = self.__coordinates_to_integers(
             self.drones[drone_id].pos)
-        return (self.drone_pos, reward, done, {})
+        return self.drone_pos, reward, done, {}
 
     def __draw_grid(self):
         for y in range(0, self.max_h):
