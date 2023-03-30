@@ -46,7 +46,7 @@ class ManagerEnv(object):
         self.white = (255, 255, 255)
         self.black = (0, 0, 0)
         self.font_simu = None
-        self.block_size = WINDOW_WIDTH//2//self.max_w
+        self.block_size = (WINDOW_WIDTH//self.max_w, WINDOW_HEIGHT//2//self.max_h)
 
     def reset(self, seed=None, options=None):
 
@@ -229,7 +229,7 @@ class ManagerEnv(object):
     def __draw_grid(self):
         for y in range(0, self.max_h):
             for x in range(0, self.max_w):
-                rect = pygame.Rect(x * self.block_size, y * self.block_size, self.block_size, self.block_size)
+                rect = pygame.Rect(x * self.block_size[0], y * self.block_size[1], self.block_size[0], self.block_size[1])
                 pygame.draw.rect(self.screen, self.black, rect, 1)
 
     def __draw_qtable(self, Qtable):
@@ -239,8 +239,8 @@ class ManagerEnv(object):
                 drone_id = n // len(Actions)
                 action = Actions(n % len(Actions))
 
-                rect = pygame.Rect(x * self.block_size, WINDOW_HEIGHT//2 +
-                                   10 + y * self.block_size, self.block_size, self.block_size)
+                rect = pygame.Rect(x * self.block_size[0], WINDOW_HEIGHT//2 +
+                                   y * self.block_size[1], self.block_size[0], self.block_size[1])
                 pygame.draw.rect(self.screen, self.black, rect, 1)
 
                 # text_Qtable = self.font_simu.render(
@@ -254,41 +254,42 @@ class ManagerEnv(object):
 
                 if action in [Actions.BACKWARDS, Actions.FORWARD, Actions.LEFT, Actions.RIGHT]:
                     self.screen.blit(pygame.transform.rotate(self.scaled_arrow, 90. * (
-                        action.value % 4)), (x * self.block_size, WINDOW_HEIGHT//2 + 10 + y * self.block_size))
+                        action.value % 4)), (x * self.block_size[0], WINDOW_HEIGHT//2 + y * self.block_size[1]))
                 elif action in [Actions.LAUNCH, Actions.LAND, Actions.DO_TASK]:
-                    pygame.draw.circle(self.screen, colors[action.value % 4], (x * self.block_size + self.block_size //
-                                       2, WINDOW_HEIGHT//2 + 10 + y * self.block_size + self.block_size//2), self.block_size//2)
+                    pygame.draw.circle(self.screen, colors[action.value % 4], (x * self.block_size[0] + self.block_size[0] //
+                                       2, WINDOW_HEIGHT//2 + y * self.block_size[1] + self.block_size[1]//2), self.block_size[1]//2)
                 
-                pygame.draw.circle(self.screen, (255, 195, 0), (self.drones[0].pos[0] * self.block_size + self.block_size //
-                                    2, WINDOW_HEIGHT//2 + 10 + self.drones[0].pos[1] * self.block_size + self.block_size//2), self.block_size//8)
+                pygame.draw.circle(self.screen, (255, 195, 0), (self.drones[0].pos[0] * self.block_size[0] + self.block_size[0] //
+                                    2, WINDOW_HEIGHT//2 + self.drones[0].pos[1] * self.block_size[1] + self.block_size[1]//2), self.block_size[1]//8)
 
                 # self.screen.blit(
                 #     text_Qtable,
                 #     (x * self.block_size,
                 #      WINDOW_HEIGHT//2 + 10 + y * self.block_size))
+        pygame.draw.line(self.screen, (255,0,0), (0, WINDOW_HEIGHT//2), (WINDOW_WIDTH, WINDOW_HEIGHT//2), 15) 
 
     def __draw_obstacle(self, obstacle_pos):
 
         alt_color = (255, 195, 0)
-        for i in range(0, self.block_size):
-            for j in range(0, self.block_size):
+        for i in range(0, self.block_size[1]):
+            for j in range(0, self.block_size[0]):
                 if ((i % 2 == 0 and j % 2 == 0) or (i % 2 != 0 and j % 2 != 0)):
                     rect = pygame.Rect(
-                        obstacle_pos[0] * self.block_size + j, obstacle_pos[1] * self.block_size + i, 1, 1)
+                        obstacle_pos[0] * self.block_size[0] + j, obstacle_pos[1] * self.block_size[1] + i, 1, 1)
                     pygame.draw.rect(self.screen, self.black, rect, 1)
         if (str(obstacle_pos[2]) != '0' and self.font_simu != None):
             text_obstacle = self.font_simu.render(
                 obstacle_pos[2], True, alt_color)
             self.screen.blit(
-                text_obstacle, (obstacle_pos[0] * self.block_size, obstacle_pos[1] * self.block_size))
+                text_obstacle, (obstacle_pos[0] * self.block_size[0], obstacle_pos[1] * self.block_size[1]))
 
     def __draw_target(self):
         target_col = (0, 255, 0)
         for target in self.targets_pos:
             if target not in self.visited_targets:
                 target_pos = self.__integers_to_coordinates(target)
-                pygame.draw.circle(self.screen, target_col, (target_pos[0] * self.block_size + (
-                    self.block_size - 1)/2, target_pos[1] * self.block_size + (self.block_size - 1)/2), self.block_size/2, 5)
+                pygame.draw.circle(self.screen, target_col, (target_pos[0] * self.block_size[0] + (
+                    self.block_size[0] - 1)/2, target_pos[1] * self.block_size[1] + (self.block_size[1] - 1)/2), self.block_size[0]/2, 5)
 
     def __draw_house(self):
         col_wall = (255, 228, 225)
@@ -296,17 +297,17 @@ class ManagerEnv(object):
         col_roof = (255, 0, 0)
 
         start = self.__integers_to_coordinates(self.start_pos)
-        wall = pygame.Rect(start[0] * self.block_size + (1/5) * self.block_size,
-                           start[1] * self.block_size + (2/3) * self.block_size, 20, 10)
-        door = pygame.Rect(start[0] * self.block_size + (1/2) * self.block_size,
-                           start[1] * self.block_size + (5/6) * self.block_size, 2, 5)
+        wall = pygame.Rect(start[0] * self.block_size[0] + (1/5) * self.block_size[0],
+                           start[1] * self.block_size[1] + (2/3) * self.block_size[1], 20, 10)
+        door = pygame.Rect(start[0] * self.block_size[0] + (1/2) * self.block_size[0],
+                           start[1] * self.block_size[1] + (5/6) * self.block_size[1], 2, 5)
 
-        start_roof = (start[0] * self.block_size + (1/2) *
-                      self.block_size, start[1] * self.block_size)
-        roof_b = (start[0] * self.block_size + self.block_size,
-                  start[1] * self.block_size + (2/3) * self.block_size)
-        roof_c = (start[0] * self.block_size, start[1] *
-                  self.block_size + (2/3) * self.block_size)
+        start_roof = (start[0] * self.block_size[0] + (1/2) *
+                      self.block_size[0], start[1] * self.block_size[1])
+        roof_b = (start[0] * self.block_size[0] + self.block_size[0],
+                  start[1] * self.block_size[1] + (2/3) * self.block_size[1])
+        roof_c = (start[0] * self.block_size[0], start[1] *
+                  self.block_size[1] + (2/3) * self.block_size[1])
 
         pygame.draw.polygon(self.screen, col_roof,
                             (start_roof, roof_b, roof_c))
@@ -324,12 +325,12 @@ class ManagerEnv(object):
             pygame.draw.polygon(arrow, (0, 0, 0), ((
                 25, 125), (25, 225), (225, 225), (225, 325), (325, 175), (225, 25), (225, 125)))
             self.scaled_arrow = pygame.transform.scale(
-                arrow, (self.block_size, self.block_size))
+                arrow, self.block_size)
         if self.clock is None:
             self.clock = pygame.time.Clock()
         if self.font_simu is None:
             self.font_simu = pygame.font.SysFont(
-                'liberationmono', self.block_size, True)
+                'liberationmono', self.block_size[1], True)
 
         self.screen.fill(self.white)
         self.__draw_grid()
@@ -361,4 +362,4 @@ class ManagerEnv(object):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        self.clock.tick(100.8)
+        self.clock.tick(5)
