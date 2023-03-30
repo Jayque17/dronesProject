@@ -216,11 +216,11 @@ class ManagerEnv(object):
         #     reward = -100
         #     done = True
         
-        # reward drone if it gets closer to one of the targets
-        last_distance = self.distance_to_targets
-        self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), drone.pos) for target in self.targets_pos for drone in self.drones]
-        if last_distance > self.distance_to_targets:
-            reward += 5
+        # reward drone if it gets closer to any target
+        # last_distance = self.distance_to_targets
+        # self.distance_to_targets = [distance_squared(self.__integers_to_coordinates(target), drone.pos) for target in self.targets_pos for drone in self.drones]
+        # if any(x>y for x, y, in zip(self.distance_to_targets, last_distance)):
+        #     reward += 5
 
         self.drone_pos = self.__coordinates_to_integers(
             self.drones[drone_id].pos)
