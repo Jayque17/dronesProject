@@ -50,6 +50,9 @@ def writeActionsToPythonScript(listActions, filePathName, map_real_dims, map_sim
     block_w = map_real_dims[0] // map_simu_dims[0]
     block_h = map_real_dims[1] // map_simu_dims[1]
 
+    print("block_w: " + str(block_w))
+    print("block_h: " + str(block_h))
+
     with open(filePathName, "w") as f:
         f.write(
             """
