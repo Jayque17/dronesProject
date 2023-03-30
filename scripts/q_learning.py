@@ -124,3 +124,6 @@ if __name__ == '__main__':
             env.render(Q[j])
     print(total)
     print(action_list)
+
+    writeActionsToPythonScript(action_list, "scripts/q_learning_actions.py", env.map_real_dims, env.map_simu_dims)
+
