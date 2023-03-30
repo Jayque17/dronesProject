@@ -49,8 +49,8 @@ class Drone():
     blue = (0, 0, 255)
     arrow_col = (199,21,133)
 
-    x =  self.pos[0] * block_size + block_size/2
-    y =  self.pos[1] * block_size + block_size/2
+    x =  self.pos[0] * block_size[0] + block_size[0]/2
+    y =  self.pos[1] * block_size[1] + block_size[1]/2
     circle = pygame.draw.circle(screen, blue, (x, y), radius)
     
     # Est
