@@ -4,20 +4,24 @@ from random import randint, uniform
 import matplotlib.pyplot as plt
 from functionnalities import *
 
+
 def take_action(st, Q, eps, nb_actions):
     # Take an action
     if uniform(0, 1) < eps:
-        action = randint(0, nb_actions-1)
-    else: # Or greedy action
+        action = randint(0, nb_actions - 1)
+    else:  # Or greedy action
         action = np.argmax(Q[st])
     return action
+
 
 def displayQTable(Q):
     for i, e in enumerate(Q):
         print(i, e)
 
+
 def getInfoRewardAndBattery(listeRewardsBatteryEpisode, droneBatterry, totalReward, episode):
     listeRewardsBatteryEpisode.append((episode, droneBatterry, totalReward))
+
 
 def plot(listeRewardsBatteryEpisode):
     episode = []
@@ -37,75 +41,86 @@ def plot(listeRewardsBatteryEpisode):
     plt.show()
 
 
-
-
 if __name__ == '__main__':
-    # files_ap = "D:\dronesProject\\files_ap\\map_simu2997.ap" #path nader
+    # files_ap = "D:\\dronesProject\\files_ap\\map_simu2997.ap"  # path nader
     # files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
     files_ap = "files_ap/" #path linux thomas
-    env = parser(files_ap + "test4.ap")
+    env = parser(files_ap + "map_simu2997.ap")
     st = env.reset()
 
-    Q = np.zeros((env.NB_STATES, env.NB_ACTIONS))
     # displayQTable(Q)
 
+    Q = []
     listeRewardsBatteryEpisode = []
     totalReward = 0
-    
-    for i in range(1000):
+    done = 0
+    j = 0
 
-        st = env.reset()
-        done = False
 
-        while not done:
-            # Take an action
-            action = take_action(st, Q, 0.6, env.NB_ACTIONS)
-            stp1, reward, done, _ = env.step(action)
+    for _ in range(len(env.targets_pos)+1):
+        Q.append(np.zeros((env.NB_STATES, env.NB_ACTIONS)))
+        for i in range(2000):
 
-            # print("_________________________________________________________"*3)
-            # print(i, st, reward, done)
-            # env.render(Q)
+            st = env.reset(seed=j)
+            done = 0
 
-            # Update Q
-            action1 = take_action(stp1, Q, 0., env.NB_ACTIONS)
-            #displayQTable(Q)
+            while not done:
+                # Take an action
+                action = take_action(st, Q[j], 0.4, env.NB_ACTIONS)
+                stp1, reward, done, _ = env.step(action)
 
-            value = Q[st][action] + 0.01*(reward + 0.9*Q[stp1][action1] - Q[st][action])
-            Q[st][action] = value
+                # print("_________________________________________________________"*3)
+                # print(i, st, reward, done)
 
-            st = stp1
-            # print("st", st)
-            # print("action", action)
-            # print("value", value)
-            #displayQTable(Q)
+                # Update Q
+                action1 = take_action(stp1, Q[j], 0., env.NB_ACTIONS)
+                # displayQTable(Q)
 
-            totalReward += reward
-            # print('total', totalReward)
-            if done:
-                getInfoRewardAndBattery(listeRewardsBatteryEpisode, env.drones[0].battery, totalReward, i+1)
-                totalReward = 0
+                value = Q[j][st][action] + 0.01 * (reward + 0.9 * Q[j][stp1][action1] - Q[j][st][action])
+                Q[j][st][action] = value
 
-    displayQTable(Q)
+                st = stp1
+                # print("st", st)
+                # print("action", action)
+                # print("value", value)
+                # displayQTable(Q)
+
+                totalReward += reward
+                # print('total', totalReward)
+                if done == 2:
+                    getInfoRewardAndBattery(listeRewardsBatteryEpisode, env.drones[0].battery, totalReward, i + 1)
+                    totalReward = 0
+
+        st = env.reset(seed=j, options=True)
+        j += 1
+        done = 0
+
+    print(len(Q))
+    for i in range(len(Q)):
+        displayQTable(Q[i])
     plot(listeRewardsBatteryEpisode)
 
-    
     # 52 6
     # check if qlearning really work
-    total = 0 
-    done = False
+    total = 0
+    done = 0
     st = env.reset()
-    while not done:
-        best_action = np.argmax(Q[st])
-        print("action", best_action)
-        for d in env.drones:
-            print("drone pos", d.pos)
+    j = 0
+    action_list = []
+    for j in range(len(Q)):
+        done = 0
+        while not done:
+            best_action = np.argmax(Q[j][st])
+            action_list.append(best_action)
+            print("action", best_action)
+            for d in env.drones:
+                print("drone pos", d.pos)
+                print("drone battery", d.battery)
 
-        stp1, reward, done, _ = env.step(best_action)
-        Q[st][best_action] = - Q[st][best_action]
-        print(stp1, reward, done)
-        total += reward
-        st = stp1
-        env.render(Q)
+            stp1, reward, done, _ = env.step(best_action)
+            print(j, stp1, reward, done)
+            total += reward
+            st = stp1
+            env.render(Q[j])
     print(total)
-
-
+    print(action_list)
