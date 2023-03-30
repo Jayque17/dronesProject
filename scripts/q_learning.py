@@ -26,19 +26,12 @@ def plot(listeRewardsBatteryEpisode):
     for i in range(len(listeRewardsBatteryEpisode)):
         episode.append(listeRewardsBatteryEpisode[i][0])
         droneBatterry.append(listeRewardsBatteryEpisode[i][1])
-        # print('reward',listeRewardsBatteryEpisode[i][2])
         totalReward.append(listeRewardsBatteryEpisode[i][2])
-    
-    # fig, (ax1, ax2) = plt.subplots(1, 2)
-    # fig.suptitle('Rewards and Battery level by episodes')
-    # ax1.plot(episode, droneBatterry)
-    # ax2.plot(episode, totalReward)
-    # fig.show()
 
-    plt.subplot(2, 1, 1)
+    plt.subplot(2, 1, 1).set_title("Drone Battery for each episode")
     plt.plot(episode, droneBatterry)
 
-    plt.subplot(2, 1, 2)
+    plt.subplot(2, 1, 2).set_title("Total Reward for each episode")
     plt.plot(episode, totalReward)
 
     plt.show()

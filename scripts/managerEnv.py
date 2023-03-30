@@ -243,11 +243,11 @@ class ManagerEnv(object):
                                    10 + y * self.block_size, self.block_size, self.block_size)
                 pygame.draw.rect(self.screen, self.black, rect, 1)
 
-                text_Qtable = self.font_simu.render(
-                    str(drone_id),
-                    True,
-                    (255, 0, 0)
-                )
+                # text_Qtable = self.font_simu.render(
+                #     str(drone_id),
+                #     True,
+                #     (255, 0, 0)
+                # )
 
                 colors = [pygame.Color(255, 0, 0), pygame.Color(255, 255, 0), pygame.Color(0, 255, 0), pygame.Color(
                     0, 255, 255), pygame.Color(0, 0, 255), pygame.Color(255, 0, 255), pygame.Color(255, 0, 0)]
@@ -258,11 +258,14 @@ class ManagerEnv(object):
                 elif action in [Actions.LAUNCH, Actions.LAND, Actions.DO_TASK]:
                     pygame.draw.circle(self.screen, colors[action.value % 4], (x * self.block_size + self.block_size //
                                        2, WINDOW_HEIGHT//2 + 10 + y * self.block_size + self.block_size//2), self.block_size//2)
+                
+                pygame.draw.circle(self.screen, (255, 195, 0), (self.drones[0].pos[0] * self.block_size + self.block_size //
+                                    2, WINDOW_HEIGHT//2 + 10 + self.drones[0].pos[1] * self.block_size + self.block_size//2), self.block_size//8)
 
-                self.screen.blit(
-                    text_Qtable,
-                    (x * self.block_size,
-                     WINDOW_HEIGHT//2 + 10 + y * self.block_size))
+                # self.screen.blit(
+                #     text_Qtable,
+                #     (x * self.block_size,
+                #      WINDOW_HEIGHT//2 + 10 + y * self.block_size))
 
     def __draw_obstacle(self, obstacle_pos):
 
