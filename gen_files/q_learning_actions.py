@@ -4,7 +4,7 @@ tello = Tello()
 tello.connect()
 tello.enable_mission_pads()
 onMissionPad = True
-minz = 50
+minz = 35
 x = 0
 y = 0
 z = minz
@@ -14,6 +14,15 @@ print("temperature", tello.get_temperature())
 print("battery ", tello.get_battery())
 
 tello.takeoff()
+print("temperature", tello.get_temperature())
+print("battery ", tello.get_battery())
+
+if onMissionPad:
+    mid = tello.get_mission_pad_id()
+    x = y = 0
+    tello.go_xyz_speed_mid(x, y, z, 10, mid)
+z += 25
+tello.go_xyz_speed_mid(x, y, z, 10, mid)
 
 if onMissionPad:
     mid = tello.get_mission_pad_id()
@@ -74,6 +83,13 @@ if onMissionPad:
     mid = tello.get_mission_pad_id()
     x = y = 0
     tello.go_xyz_speed_mid(x, y, z, 10, mid)
+z += 25
+tello.go_xyz_speed_mid(x, y, z, 10, mid)
+
+if onMissionPad:
+    mid = tello.get_mission_pad_id()
+    x = y = 0
+    tello.go_xyz_speed_mid(x, y, z, 10, mid)
 tello.flip_back()
 tello.go_xyz_speed_mid(x, y, z, 10, mid)
 
@@ -89,6 +105,16 @@ if onMissionPad:
     mid = tello.get_mission_pad_id()
     x = y = 0
     tello.go_xyz_speed_mid(x, y, z, 10, mid)
+if z > minz:
+    z -= 25
+    tello.go_xyz_speed_mid(x, y, z, 10, mid)
+else:
+    print("bah non")
+
+if onMissionPad:
+    mid = tello.get_mission_pad_id()
+    x = y = 0
+    tello.go_xyz_speed_mid(x, y, z, 10, mid)
 x +=50
 tello.go_xyz_speed_mid(x, y, z, 10, mid)
 onMissionPad = not onMissionPad
@@ -116,6 +142,16 @@ if onMissionPad:
 y +=50
 tello.go_xyz_speed_mid(x, y, z, 10, mid)
 onMissionPad = not onMissionPad
+
+if onMissionPad:
+    mid = tello.get_mission_pad_id()
+    x = y = 0
+    tello.go_xyz_speed_mid(x, y, z, 10, mid)
+if z > minz:
+    z -= 25
+    tello.go_xyz_speed_mid(x, y, z, 10, mid)
+else:
+    print("bah non")
 
 if onMissionPad:
     mid = tello.get_mission_pad_id()

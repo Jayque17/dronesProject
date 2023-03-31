@@ -59,7 +59,7 @@ tello = Tello()
 tello.connect()
 tello.enable_mission_pads()
 onMissionPad = True
-minz = 50
+minz = 35
 x = 0
 y = 0
 z = minz
@@ -166,7 +166,7 @@ if onMissionPad:
     mid = tello.get_mission_pad_id()
     x = y = 0
     tello.go_xyz_speed_mid(x, y, z, 10, mid)
-z += 20
+z += 25
 tello.go_xyz_speed_mid(x, y, z, 10, mid)
 """
                 )
@@ -178,7 +178,7 @@ if onMissionPad:
     x = y = 0
     tello.go_xyz_speed_mid(x, y, z, 10, mid)
 if z > minz:
-    z -= 20
+    z -= 25
     tello.go_xyz_speed_mid(x, y, z, 10, mid)
 else:
     print("bah non")

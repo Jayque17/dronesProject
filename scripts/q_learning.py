@@ -1,5 +1,6 @@
 import numpy as np
 from functionnalities import *
+import os
 
 
 if __name__ == '__main__':
@@ -18,7 +19,7 @@ if __name__ == '__main__':
 
     for _ in range(len(env.targets_pos)+1):
         Q.append(np.zeros((env.NB_STATES, env.NB_ACTIONS)))
-        for i in range(10000):
+        for i in range(20_000):
 
             st = env.reset(seed=j)
             done = 0
@@ -72,5 +73,5 @@ if __name__ == '__main__':
     print(total)
     print(action_list)
 
-    writeActionsToPythonScript(action_list, ".\\gen_files\\q_learning_actions.py", env.map_real_dims, env.map_simu_dims)
+    writeActionsToPythonScript(action_list, os.path.join(".", "gen_files", "q_learning_actions.py"), env.map_real_dims, env.map_simu_dims)
 
