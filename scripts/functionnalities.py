@@ -1,4 +1,7 @@
 from managerEnv import ManagerEnv
+from random import randint, uniform
+import matplotlib.pyplot as plt
+import numpy as np
 
 def parser(file_ap):
     f = open(file_ap, "r")
@@ -184,3 +187,33 @@ else:
             else:
                 raise ValueError(
                     "This action id isn't handle, your action id is " + a + ", it only from 0 to 8!")
+
+def take_action(st, Q, eps, nb_actions):
+    # Take an action
+    if uniform(0, 1) < eps:
+        action = randint(0, nb_actions - 1)
+    else:  # Or greedy action
+        action = np.argmax(Q[st])
+    return action
+
+
+def displayQTable(Q):
+    for i, e in enumerate(Q):
+        print(i, e)
+
+
+def getInfoRewardAndBattery(listeRewardsBatteryEpisode, droneBatterry, totalReward, episode, numQtable):
+    if len(listeRewardsBatteryEpisode) <= numQtable: 
+        listeRewardsBatteryEpisode.append([(episode, droneBatterry, totalReward)])
+    else:
+        listeRewardsBatteryEpisode[numQtable].append((episode, droneBatterry, totalReward))
+
+def dronePlot(listeRewardsBatteryEpisode):
+
+    fig, ax = plt.subplots(2, len(listeRewardsBatteryEpisode))
+
+    for i in range(len(listeRewardsBatteryEpisode)):
+        ax[0, i].plot([x for x, _, _ in listeRewardsBatteryEpisode[i]], [x for _, x, _ in listeRewardsBatteryEpisode[i]] , 'tab:green')
+        ax[1, i].plot([x for x, _, _ in listeRewardsBatteryEpisode[i]], [x for _, _, x in listeRewardsBatteryEpisode[i]] , 'tab:orange')
+
+    plt.show()
