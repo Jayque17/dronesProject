@@ -2,8 +2,6 @@ import numpy as np
 from functionnalities import *
 
 
-
-
 if __name__ == '__main__':
     # files_ap = "D:\\dronesProject\\files_ap\\map_simu2997.ap"  # path nader
     # files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
@@ -20,7 +18,7 @@ if __name__ == '__main__':
 
     for _ in range(len(env.targets_pos)+1):
         Q.append(np.zeros((env.NB_STATES, env.NB_ACTIONS)))
-        for i in range(500):
+        for i in range(10000):
 
             st = env.reset(seed=j)
             done = 0
@@ -49,7 +47,7 @@ if __name__ == '__main__':
     print(len(Q))
     for i in range(len(Q)):
         displayQTable(Q[i])
-    dronePlot(listeRewardsBatteryEpisode)
+    # dronePlot(listeRewardsBatteryEpisode)
 
     total = 0
     done = 0

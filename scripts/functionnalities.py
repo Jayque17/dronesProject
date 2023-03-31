@@ -31,7 +31,7 @@ def parser(file_ap):
         elif (len(l) == 1):
             for j in range(len(l[0])):
                 if (l[0][j] == "x"):
-                    obstacles_pos.append((j, i - 2 - nb_items, 0))
+                    obstacles_pos.append((j, i - 2 - nb_items, 5))
                 elif (l[0][j] in "0123456789ABCDEF"):
                     if (l[0][j] != "0"):
                         obstacles_pos.append((j, i - 2 - nb_items,  l[0][j]))
@@ -211,6 +211,11 @@ def getInfoRewardAndBattery(listeRewardsBatteryEpisode, droneBatterry, totalRewa
 def dronePlot(listeRewardsBatteryEpisode):
 
     fig, ax = plt.subplots(2, len(listeRewardsBatteryEpisode))
+
+    print("AXXXXXX : ", list(ax))
+    print("all triplets : ", all([len(x) == 3 for y in listeRewardsBatteryEpisode for x in y]))
+    print("size of listeRewardsBatteryEpisode : ", len(listeRewardsBatteryEpisode))
+    print(listeRewardsBatteryEpisode)
 
     for i in range(len(listeRewardsBatteryEpisode)):
         ax[0, i].plot([x for x, _, _ in listeRewardsBatteryEpisode[i]], [x for _, x, _ in listeRewardsBatteryEpisode[i]] , 'tab:green')

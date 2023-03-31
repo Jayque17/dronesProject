@@ -5,9 +5,9 @@ class Drone():
     self.launched = True
     self.battery = 100
     self.vect = 6
-    self.altitude = 1
     self.rotations = [(1,0),(1,1),(0,1),(-1,1),(-1,0),(-1,-1),(0,-1),(1,-1)]
-    self.pos = start_pos
+    x, y, z = start_pos
+    self.pos = (x, y, z)
     self.current_rot = self.rotations[self.vect]
 
   def rotate(self, dir):
@@ -15,31 +15,31 @@ class Drone():
     self.battery -= 1
   
   def forward(self):
-    self.pos = (self.pos[0] + self.rotations[self.vect][0],self.pos[1] + self.rotations[self.vect][1])
+    self.pos = (self.pos[0] + self.rotations[self.vect][0],self.pos[1] + self.rotations[self.vect][1], self.pos[2])
     #self.pos = self.pos + self.rotations[self.vect]
     self.battery -= 1
 
   def right(self):
-    self.pos = (self.pos[0] + self.rotations[(self.vect + 2) % 8][0],self.pos[1] + self.rotations[(self.vect + 2) % 8][1])
+    self.pos = (self.pos[0] + self.rotations[(self.vect + 2) % 8][0],self.pos[1] + self.rotations[(self.vect + 2) % 8][1], self.pos[2])
     self.battery -= 1
     #self.pos = self.pos + self.rotations[(self.vect + 2) % 8]
     
   def backward(self):
-    self.pos = (self.pos[0] + self.rotations[(self.vect + 4) % 8][0],self.pos[1] + self.rotations[(self.vect + 4) % 8][1])    
+    self.pos = (self.pos[0] + self.rotations[(self.vect + 4) % 8][0],self.pos[1] + self.rotations[(self.vect + 4) % 8][1], self.pos[2])    
     self.battery -= 1
     #self.pos = self.pos + self.rotations[(self.vect + 4) % 8]
     
   def left(self):
-    self.pos = (self.pos[0] + self.rotations[(self.vect + 6) % 8][0],self.pos[1] + self.rotations[(self.vect + 6) % 8][1])
+    self.pos = (self.pos[0] + self.rotations[(self.vect + 6) % 8][0],self.pos[1] + self.rotations[(self.vect + 6) % 8][1], self.pos[2])
     self.battery -= 1
     #self.pos = self.pos + self.rotations[(self.vect + 6) % 8]
     
   def up(self):
-    self.altitude += 1
+    self.pos = (self.pos[0],self.pos[1], self.pos[2] + 1)
     self.battery -= 1
     
   def down(self):
-    self.altitude -= 1
+    self.pos = (self.pos[0],self.pos[1], self.pos[2] - 1)
     self.battery -= 1
     
 
