@@ -47,8 +47,8 @@ def parser(file_ap):
 
 def writeActionsToPythonScript(listActions, filePathName, map_real_dims, map_simu_dims):
 
-    block_w = map_real_dims[0] // map_simu_dims[0]
-    block_h = map_real_dims[1] // map_simu_dims[1]
+    block_w = int(map_real_dims[0] // map_simu_dims[0])
+    block_h = int(map_real_dims[1] // map_simu_dims[1])
 
     print("block_w: " + str(block_w))
     print("block_h: " + str(block_h))
@@ -68,6 +68,8 @@ z = minz
 mid = -1
 
 tello.takeoff()
+print("temperature", tello.get_temperature())
+print("battery ", tello.get_battery())
 """
         )
 

@@ -24,6 +24,8 @@ class ManagerEnv(object):
 
         self.max_w = self.map_simu_dims[0]
         self.max_h = self.map_simu_dims[1]
+        self.max_z = 5
+        self.max_real_z = 225
         self.tmp_drones = []
         self.tmp_target = []
 
@@ -138,21 +140,21 @@ class ManagerEnv(object):
             else:
                 reward = -20
 
-        # elif self.mapping_actions[action % len(Actions)] == Actions.UP:
-        #     print("up")
-        #     if (self.drones[drone_id].launched):
-        #         # PrintInDroneFile
-        #         self.drones[drone_id].up()
-        #     else:
-        #         reward = -20
+        elif self.mapping_actions[action % len(Actions)] == Actions.UP:
+            print("up")
+            if (self.drones[drone_id].launched):
+                # PrintInDroneFile
+                self.drones[drone_id].up()
+            else:
+                reward = -20
 
-        # elif self.mapping_actions[action % len(Actions)] == Actions.DOWN:
-        #     print("down")
-        #     if (self.drones[drone_id].launched):
-        #         # PrintInDroneFile
-        #         self.drones[drone_id].down()
-        #     else:
-        #         reward = -20
+        elif self.mapping_actions[action % len(Actions)] == Actions.DOWN:
+            print("down")
+            if (self.drones[drone_id].launched):
+                # PrintInDroneFile
+                self.drones[drone_id].down()
+            else:
+                reward = -20
 
         elif self.mapping_actions[action % len(Actions)] == Actions.DO_TASK:
             # print("do task")
