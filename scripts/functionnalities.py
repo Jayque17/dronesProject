@@ -1,10 +1,5 @@
 from managerEnv import ManagerEnv
 
-
-##### Test #####
-# MAX 34x25 block map render
-
-
 def parser(file_ap):
     f = open(file_ap, "r")
     elems = f.readlines()
@@ -67,14 +62,17 @@ y = 0
 z = minz
 mid = -1
 
+print("temperature", tello.get_temperature())
+print("battery ", tello.get_battery())
+
 tello.takeoff()
 print("temperature", tello.get_temperature())
 print("battery ", tello.get_battery())
 """
         )
 
-        for a in listActions:  # Todo finir le truc
-            if a == 0:  # Right ok
+        for a in listActions: 
+            if a == 0:  # Right 
                 f.write(
                     """
 if onMissionPad:
@@ -86,7 +84,7 @@ tello.go_xyz_speed_mid(x, y, z, 10, mid)
 onMissionPad = not onMissionPad
         """
                 )
-            elif a == 1:  # Backward OK
+            elif a == 1:  # Backward 
                 f.write(
                     """
 if onMissionPad:
@@ -98,7 +96,7 @@ tello.go_xyz_speed_mid(x, y, z, 10, mid)
 onMissionPad = not onMissionPad
 """
                 )
-            elif a == 2:  # Left ok
+            elif a == 2:  # Left 
                 f.write(
                     """
 if onMissionPad:
@@ -110,7 +108,7 @@ tello.go_xyz_speed_mid(x, y, z, 10, mid)
 onMissionPad = not onMissionPad
 """
                 )
-            elif a == 3:  # Forward OK
+            elif a == 3:  # Forward 
                 f.write(
                     """
 if onMissionPad:
@@ -122,7 +120,7 @@ tello.go_xyz_speed_mid(x, y, z, 10, mid)
 onMissionPad = not onMissionPad
 """
                 )
-            elif a == 4:  # Launch ok
+            elif a == 4:  # Launch 
                 f.write(
                     """
 tello.land()
@@ -134,7 +132,7 @@ tello.go_xyz_speed_mid(x, y, z, 10, mid)
 onMissionPad = not onMissionPad
 """
                 )
-            elif a == 5:  # Land 0k
+            elif a == 5:  # Land 
                 f.write(
                     """
 if onMissionPad:
@@ -147,7 +145,7 @@ tello.land()
 onMissionPad = not onMissionPad
 """
                 )
-            elif a == 6:  # Do Task ok
+            elif a == 6:  # Do Task 
                 f.write(
                     """
 if onMissionPad:
@@ -158,7 +156,7 @@ tello.flip_back()
 tello.go_xyz_speed_mid(x, y, z, 10, mid)
 """
                 )
-            elif a == 7:  # Up ok
+            elif a == 7:  # Up 
                 f.write(
                     """
 if onMissionPad:
@@ -169,7 +167,7 @@ z += 20
 tello.go_xyz_speed_mid(x, y, z, 10, mid)
 """
                 )
-            elif a == 8:  # Down ok
+            elif a == 8:  # Down 
                 f.write(
                     """
 if onMissionPad:

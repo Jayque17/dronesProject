@@ -19,24 +19,19 @@ def displayQTable(Q):
         print(i, e)
 
 
-def getInfoRewardAndBattery(listeRewardsBatteryEpisode, droneBatterry, totalReward, episode):
-    listeRewardsBatteryEpisode.append((episode, droneBatterry, totalReward))
+def getInfoRewardAndBattery(listeRewardsBatteryEpisode, droneBatterry, totalReward, episode, numQtable):
+    if len(listeRewardsBatteryEpisode) <= numQtable: 
+        listeRewardsBatteryEpisode.append([(episode, droneBatterry, totalReward)])
+    else:
+        listeRewardsBatteryEpisode[numQtable].append((episode, droneBatterry, totalReward))
 
+def dronePlot(listeRewardsBatteryEpisode):
 
-def plot(listeRewardsBatteryEpisode):
-    episode = []
-    droneBatterry = []
-    totalReward = []
+    fig, ax = plt.subplots(2, len(listeRewardsBatteryEpisode))
+
     for i in range(len(listeRewardsBatteryEpisode)):
-        episode.append(listeRewardsBatteryEpisode[i][0])
-        droneBatterry.append(listeRewardsBatteryEpisode[i][1])
-        totalReward.append(listeRewardsBatteryEpisode[i][2])
-
-    plt.subplot(2, 1, 1).set_title("Drone Battery for each episode")
-    plt.plot(episode, droneBatterry)
-
-    plt.subplot(2, 1, 2).set_title("Total Reward for each episode")
-    plt.plot(episode, totalReward)
+        ax[0, i].plot([x for x, _, _ in listeRewardsBatteryEpisode[i]], [x for _, x, _ in listeRewardsBatteryEpisode[i]] , 'tab:green')
+        ax[1, i].plot([x for x, _, _ in listeRewardsBatteryEpisode[i]], [x for _, _, x in listeRewardsBatteryEpisode[i]] , 'tab:orange')
 
     plt.show()
 
@@ -48,8 +43,6 @@ if __name__ == '__main__':
     env = parser(files_ap + "map_soutenance.ap")
     st = env.reset()
 
-    # displayQTable(Q)
-
     Q = []
     listeRewardsBatteryEpisode = []
     totalReward = 0
@@ -59,7 +52,7 @@ if __name__ == '__main__':
 
     for _ in range(len(env.targets_pos)+1):
         Q.append(np.zeros((env.NB_STATES, env.NB_ACTIONS)))
-        for i in range(2000):
+        for i in range(500):
 
             st = env.reset(seed=j)
             done = 0
@@ -69,26 +62,16 @@ if __name__ == '__main__':
                 action = take_action(st, Q[j], 0.4, env.NB_ACTIONS)
                 stp1, reward, done, _ = env.step(action)
 
-                # print("_________________________________________________________"*3)
-                # print(i, st, reward, done)
-
                 # Update Q
                 action1 = take_action(stp1, Q[j], 0., env.NB_ACTIONS)
-                # displayQTable(Q)
-
+            
                 value = Q[j][st][action] + 0.01 * (reward + 0.9 * Q[j][stp1][action1] - Q[j][st][action])
                 Q[j][st][action] = value
 
                 st = stp1
-                # print("st", st)
-                # print("action", action)
-                # print("value", value)
-                # displayQTable(Q)
-
                 totalReward += reward
-                # print('total', totalReward)
-                if done == 2:
-                    getInfoRewardAndBattery(listeRewardsBatteryEpisode, env.drones[0].battery, totalReward, i + 1)
+                if not done:
+                    getInfoRewardAndBattery(listeRewardsBatteryEpisode, env.drones[0].battery, totalReward, i + 1, j)
                     totalReward = 0
 
         st = env.reset(seed=j, options=True)
@@ -98,10 +81,8 @@ if __name__ == '__main__':
     print(len(Q))
     for i in range(len(Q)):
         displayQTable(Q[i])
-    plot(listeRewardsBatteryEpisode)
+    dronePlot(listeRewardsBatteryEpisode)
 
-    # 52 6
-    # check if qlearning really work
     total = 0
     done = 0
     st = env.reset()
@@ -125,5 +106,5 @@ if __name__ == '__main__':
     print(total)
     print(action_list)
 
-    writeActionsToPythonScript(action_list, "scripts/q_learning_actions.py", env.map_real_dims, env.map_simu_dims)
+    writeActionsToPythonScript(action_list, ".\\gen_files\\q_learning_actions.py", env.map_real_dims, env.map_simu_dims)
 

@@ -32,11 +32,9 @@ class ManagerEnv(object):
         self.start_pos = self.__coordinates_to_integers(start_pos)
         self.targets_pos = [
             self.__coordinates_to_integers(p) for p in targets_pos]
-        # self.__coordinates_to_integers(targets_pos[0])]
         self.visited_targets = []
 
         self.nb_drones = 1  # nb_drones
-        # self.battery_actions = 100
         self.drones = [Drone(start_pos) for i in range(self.nb_drones)]
         self.drone_pos = self.__coordinates_to_integers(self.drones[0].pos)
         self.launched_drones = []
@@ -107,7 +105,7 @@ class ManagerEnv(object):
             if (not self.drones[drone_id].launched):
                 self.drones[drone_id].launched = True
                 reward = -20
-                # PrintInDroneFile
+                
                 self.launched_drones.append(self.drones[drone_id])
             else:
                 reward = -20
@@ -115,28 +113,28 @@ class ManagerEnv(object):
         elif self.mapping_actions[action % len(Actions)] == Actions.FORWARD:
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].forward()
-                # PrintInDroneFile
+                
             else:
                 reward = -20
 
         elif self.mapping_actions[action % len(Actions)] == Actions.RIGHT:
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].right()
-                # PrintInDroneFile
+                
             else:
                 reward = -20
 
         elif self.mapping_actions[action % len(Actions)] == Actions.BACKWARDS:
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].backward()
-                # PrintInDroneFile
+                
             else:
                 reward = -20
 
         elif self.mapping_actions[action % len(Actions)] == Actions.LEFT:
             if (self.drones[drone_id].launched):
                 self.drones[drone_id].left()
-                # PrintInDroneFile
+                
             else:
                 reward = -20
 
@@ -157,10 +155,9 @@ class ManagerEnv(object):
                 reward = -20
 
         elif self.mapping_actions[action % len(Actions)] == Actions.DO_TASK:
-            # print("do task")
             if self.drones[drone_id].launched:
                 if self.drone_pos in self.targets_pos and self.drone_pos not in self.visited_targets:
-                    # PrintInDroneFile
+                   
                     reward = 100
                     done = 1
                     self.visited_targets.append(self.drone_pos)
@@ -176,33 +173,22 @@ class ManagerEnv(object):
             if (self.drones[drone_id] in self.launched_drones):
                 self.launched_drones.remove(self.drones[drone_id])
                 self.drones[drone_id].launched = False
-                # PrintInDroneFile
+               
             else:
                 reward = -50
 
         if (self.__out_of_bounds(self.drones[drone_id].pos)) or self.drones[drone_id].pos in [(p[0], p[1]) for p in
                                                                                               self.obstacles_pos]:
-            # print("Out of bounds", tmp_pos, self.drones[drone_id].pos)
             self.drones[drone_id].pos = tmp_pos
             reward = -100
 
         if sorted(self.targets_pos) == sorted(self.visited_targets) and self.drone_pos == self.start_pos and self.mapping_actions[action % len(Actions)] == Actions.LAND:
             done = 2
-            # Targets done
-            # print("Targets done")
             reward += 500
 
         if self.drones[drone_id].battery <= 0:
-            # print("Battery done")
             reward = -100
             done = 2
-
-
-        # elif (self.battery_actions <= 0):
-        #     # Battery outOfOrder
-        #     # print("Battery outOfOrder")
-        #     reward = -100
-        #     done = True
 
         self.drone_pos = self.__coordinates_to_integers(
             self.drones[drone_id].pos)
@@ -226,12 +212,6 @@ class ManagerEnv(object):
                                    y * self.block_size[1], self.block_size[0], self.block_size[1])
                 pygame.draw.rect(self.screen, self.black, rect, 1)
 
-                # text_Qtable = self.font_simu.render(
-                #     str(drone_id),
-                #     True,
-                #     (255, 0, 0)
-                # )
-
                 colors = [pygame.Color(255, 0, 0), pygame.Color(255, 255, 0), pygame.Color(0, 255, 0), pygame.Color(
                     0, 255, 255), pygame.Color(0, 0, 255), pygame.Color(255, 0, 255), pygame.Color(255, 0, 0)]
 
@@ -250,11 +230,8 @@ class ManagerEnv(object):
                                     WINDOW_HEIGHT // 2 + self.drones[0].pos[1] * self.block_size[1] + self.block_size[
                                         1] // 2), self.block_size[1] // 8)
 
-                # self.screen.blit(
-                #     text_Qtable,
-                #     (x * self.block_size,
-                #      WINDOW_HEIGHT//2 + 10 + y * self.block_size))
         pygame.draw.line(self.screen, (255, 0, 0), (0, WINDOW_HEIGHT // 2), (WINDOW_WIDTH, WINDOW_HEIGHT // 2), 15)
+
 
     def __draw_obstacle(self, obstacle_pos):
 
@@ -271,6 +248,7 @@ class ManagerEnv(object):
             self.screen.blit(
                 text_obstacle, (obstacle_pos[0] * self.block_size[0], obstacle_pos[1] * self.block_size[1]))
 
+
     def __draw_target(self):
         target_col = (0, 255, 0)
         for target in self.targets_pos:
@@ -280,6 +258,7 @@ class ManagerEnv(object):
                         self.block_size[0] - 1) / 2, target_pos[1] * self.block_size[1] + (self.block_size[1] - 1) / 2),
                                    self.block_size[0] / 2, 5)
 
+
     def __draw_house(self):
         col_wall = (255, 228, 225)
         col_door = (165, 42, 42)
@@ -287,7 +266,7 @@ class ManagerEnv(object):
 
         start = self.__integers_to_coordinates(self.start_pos)
         wall = pygame.Rect(start[0] * self.block_size[0] + (1 / 5) * self.block_size[0],
-                           start[1] * self.block_size[1] + (2 / 3) * self.block_size[1], 20, 10)
+                           start[1] * self.block_size[1] + (2 / 3) * self.block_size[1],  self.block_size[0], self.block_size[1]//3)
         door = pygame.Rect(start[0] * self.block_size[0] + (1 / 2) * self.block_size[0],
                            start[1] * self.block_size[1] + (5 / 6) * self.block_size[1], 2, 5)
 
@@ -325,28 +304,14 @@ class ManagerEnv(object):
         self.screen.fill(self.white)
         self.__draw_grid()
         self.__draw_house()
-        # if(Qtable == None):
         self.__draw_qtable(Qtable)
 
         for i in range(len(self.obstacles_pos)):
             self.__draw_obstacle(self.obstacles_pos[i])
         for i in range(len(self.drones)):
             self.drones[i].draw_drone(self.screen, self.block_size)
-
         self.__draw_target()
-        # self.drones[0].draw_drone(self.screen, self.block_size)
-
-        # view = pygame.surfarray.array3d(screen)
-        # view = view.transpose([1, 0, 2])
-        # img_bgr = cv2.cvtColor(view, cv2.COLOR_RGB2BGR)
-        # cv2.imshow(img_bgr)
-        # time.sleep(self.wait_time)
-
-        # canvas = pygame.Surface((self.window_size, self.window_size))
-        # canvas.fill((255, 255, 255))
-        # self.window.blit(canvas, canvas.get_rect())
-
-        # pygame.event.pump()
+    
         pygame.display.update()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
