@@ -8,8 +8,8 @@ class Actions(Enum) :
     LAUNCH        = 4
     LAND          = 5
     DO_TASK       = 6 
-    UP            = 7
-    DOWN          = 8
+    # UP            = 7
+    # DOWN          = 8
 
 
 """ 
