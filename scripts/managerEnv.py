@@ -317,4 +317,4 @@ class ManagerEnv(object):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        self.clock.tick(5)
+        self.clock.tick(1)
