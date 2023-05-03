@@ -3,3 +3,5 @@ env/
 *.pyc
 /.vscode/
 __pycache__/
+.DS_Store
+/gen_files/

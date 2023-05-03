@@ -136,17 +136,19 @@ class ManagerEnv(object):
             else:
                 reward = -20
 
-        elif self.mapping_actions[action % len(Actions)] == Actions.UP:
-            if (self.drones[drone_id].launched):
-                self.drones[drone_id].up()
-            else:
-                reward = -20
+        # elif self.mapping_actions[action % len(Actions)] == Actions.UP:
+        #     if (self.drones[drone_id].launched):
+        #         # PrintInDroneFile
+        #         self.drones[drone_id].up()
+        #     else:
+        #         reward = -20
 
-        elif self.mapping_actions[action % len(Actions)] == Actions.DOWN:
-            if (self.drones[drone_id].launched):
-                self.drones[drone_id].down()
-            else:
-                reward = -20
+        # elif self.mapping_actions[action % len(Actions)] == Actions.DOWN:
+        #     if (self.drones[drone_id].launched):
+        #         # PrintInDroneFile
+        #         self.drones[drone_id].down()
+        #     else:
+        #         reward = -20
 
         elif self.mapping_actions[action % len(Actions)] == Actions.DO_TASK:
             if self.drones[drone_id].launched:
@@ -310,4 +312,4 @@ class ManagerEnv(object):
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-        self.clock.tick(5)
+        self.clock.tick(15)
