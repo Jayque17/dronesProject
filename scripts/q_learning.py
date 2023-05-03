@@ -76,5 +76,5 @@ if __name__ == '__main__':
     print(total)
     print(action_list)
 
-    writeActionsToPythonScript(action_list, "./gen_files/q_learning_action.py", env.map_real_dims, env.map_simu_dims)
+    writeActionsToPythonScript(action_list, os.path.join("gen_files","q_learning_action.py"), env.map_real_dims, env.map_simu_dims)
 
