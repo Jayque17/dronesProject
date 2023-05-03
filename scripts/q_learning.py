@@ -3,9 +3,6 @@ from functionnalities import *
 import sys, os
 
 if __name__ == '__main__':
-    # files_ap = "D:\\dronesProject\\files_ap\\map_simu2997.ap"  # path nader
-    # files_ap = "C:\\Users\\Cancrelesh\\Documents\\ssio_courses\\dronesProject\\files_ap\\" #path windows julien
-    # files_ap = "files_ap/" #path linux thomas
 
     base_ap_dir = "files_ap"
 
@@ -25,14 +22,14 @@ if __name__ == '__main__':
 
     for _ in range(len(env.targets_pos)+1):
         Q.append(np.zeros((env.NB_STATES, env.NB_ACTIONS)))
-        for i in range(1000):
+        for i in range(20_000):
 
             st = env.reset(seed=j)
             done = 0
 
             while not done:
                 # Take an action
-                action = take_action(st, Q[j], 0.4, env.NB_ACTIONS)
+                action = take_action(st, Q[j], 0.5, env.NB_ACTIONS)
                 stp1, reward, done, _ = env.step(action)
 
                 # Update Q
